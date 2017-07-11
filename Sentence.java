@@ -78,6 +78,8 @@ public class Sentence {
             lemmas = lemmatizer.lemmatize(tokens, tags);
             stream.close();
 
+            // for loop to check lemmas and return input word as lemma when 0
+
         } catch (Exception e) {
             System.out.println("Lemma Load Error");
         }
@@ -108,7 +110,43 @@ public class Sentence {
     public void printTokensTagsLemmas() {
         for (int i=0; i<tokens.length; i++) {
             System.out.printf("TOKEN: %-9s TAG: %-4s LEMMA: %-8s\n", tokens[i], tags[i], lemmas[i]);
+
         }
+        double num = 14.364356247274;
+        String name = "sgwohwgruhowrg";
+        System.out.printf("PERCENTAGE: %-7.3f   STRING: %s", num, name);
+    }
+
+    public static String getLemma(String word) {
+
+        //user check for no whitespace in input? //please enter a single word
+
+        //the input word is a token
+        String[] lemma = new String[1];
+
+        try {
+            // Get tag
+            String[] token = new String[1];
+            token[0] = word;
+            InputStream stream = new FileInputStream("en-pos-maxent.bin");
+            POSModel model = new POSModel(stream);
+            POSTaggerME tagger = new POSTaggerME(model);
+            String[] tag = tagger.tag(token);
+            stream.close();
+
+            //get lemma
+            InputStream stream2 = new FileInputStream("en-lemmatizer.dict");
+            DictionaryLemmatizer lemmatizer = new DictionaryLemmatizer(stream2);
+            lemma = lemmatizer.lemmatize(token, tag);
+            stream.close();
+
+
+        } catch (Exception e) {
+            System.out.println("Tag or Lemma Load Error");
+            // add stack trace
+        }
+
+        return lemma[0];
     }
 
 
@@ -121,5 +159,4 @@ public class Sentence {
 //        test.printLemmas();
 
     }
-
 }
