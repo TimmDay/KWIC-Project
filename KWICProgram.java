@@ -67,23 +67,58 @@ public class KWICProgram {
                 }
             }
         }
+
         return result;
     }
-    
-    
+
     public SearchResult searchModelForLemma(String searchTerm) {
+
         SearchResult result = new SearchResult();
-        
+
         // make lemma out of search term
+        String searchLem = Sentence.getLemma(searchTerm);
+        if (searchLem.equals("0")) {
+            return null;
+        }
+
         // check the lemma lists in all the sentence objects for a match
-        
+        for (Sentence sen : article) {
+
+            String[] lemmas = sen.getLemmas();
+            boolean lemmaFoundInSen = false;
+
+            //todo if lemma doesn't exist, abandon search, or just search for the input instead
+            for (int i = 0; i < lemmas.length; i++) {
+
+                if (searchLem.equalsIgnoreCase(lemmas[i])) {
+
+                    if (!lemmaFoundInSen) {
+                        result.sentencesWithWord.add(sen.getSentence());
+                        lemmaFoundInSen = true;
+                    }
+
+                    result.countMatches++;
+
+                    String[] tags = sen.getTags();
+                    result.posTagsMatches.add(tags[i]);
+                    if (i >= 1) {
+                        result.posTagsWordsPreceding.add(tags[i - 1]);
+                    }
+                    if (i < lemmas.length-1) {
+                        result.posTagsWordsFollowing.add(tags[i + 1]);
+                    }
+                    String[] tokens = sen.getTokens();
+                    result.tokenMatches.add(tokens[i]);
+                }
+            }
+        }
         return result;
     }
 
 
     public void printSearchResults(String word) {
 
-        SearchResult result = searchModelForWord(word);
+        SearchResult result = searchModelForLemma(word); //todo have word vs lemma passed in somehow
 
         if (result != null) {
 
@@ -118,6 +153,12 @@ public class KWICProgram {
                 System.out.print(lem + " ");
             }
 
+            System.out.println();
+            System.out.print("token of match: ");
+            for (String lem : result.tokenMatches) {
+                System.out.print(lem + " ");
+            }
+
             System.out.println("\n\n");
         }
     }
@@ -131,6 +172,7 @@ public class KWICProgram {
         private ArrayList<String> posTagsWordsPreceding;
         private ArrayList<String> posTagsWordsFollowing;
         private ArrayList<String> lemmaMatches;
+        private ArrayList<String> tokenMatches;
 
         public SearchResult(){
             sentencesWithWord = new ArrayList<>();
@@ -138,31 +180,32 @@ public class KWICProgram {
             posTagsWordsPreceding = new ArrayList<>();
             posTagsWordsFollowing = new ArrayList<>();
             lemmaMatches = new ArrayList<>();
+            tokenMatches = new ArrayList<>();
         }
 
     }
 
-// MAIN
+
     public static void main(String[] args){
 
         String testString = " Tim Day is an Australian student who watches Australian football. " +
                 "But he lives in Germany, selling Watches. The time difference means he has to wake up early to watch." +
-                " He doesn't mind. He learns about computer science, by watching youtube, and Australian language tools afterwards. " +
-                "And has a nap. He's a purveyor of the finest of arts, and truncates sentences while searching for lemmas.";
+                " He doesn't mind, watching beats sleeping. He learns about computer science by watching youtube, and Australian language tools afterwards. " +
+                "He's one of the purveyors of the finest of fine arts, truncating sentences while searching for lemmas.";
 
 
         KWICProgram test = new KWICProgram(testString);
 
 //        test.printSearchResults("watches");
-        test.printSearchResults("Australian");
+//        test.printSearchResults("Australian");
+        test.printSearchResults("watches");
+
+        System.out.println(Sentence.getLemma("watches")); // test the get lemma method
 
 //        test.article.get(6).printTokensTagsLemmas();
 
 //        for (Sentence sen : test.article) {
 //            sen.printTokensWithTags();
 //        }
-
     }
 }
-
-//  oiginal path::  /Users/timday/Desktop/gitHub/Java2-KWIC-Project
