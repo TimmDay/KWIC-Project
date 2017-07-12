@@ -1,11 +1,20 @@
 /**
+ * Created by timday on 7/8/17.
+ */
+
+/**
  * This class contructs a linguistic data structure based on the input text, using open nlp tools, upon instantiation.
  * It also contains the methods for searching the data model both by the search term and the lemma of the search term.
  * The private class Search result organises the returned search data for delivery to the visualisation.
  * The open nlp linguistics tools are all contained in the Sentence.java class. Even though the
  * sentence segmentation only occurs here, we decided it was neater to keep it all together
  */
+
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+
 
 public class KWICProgram {
 
@@ -27,8 +36,18 @@ public class KWICProgram {
             if (command.equals("string")){
                 // do nothing
             }
-            if (command.equals("file")) {
-                // do buffered reader stuff to get text string
+            if (command.equals("file")) { // todo. test this
+                String fileName = text; //this is the text that the user entered
+
+                //create the stream for reading the file
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
+                String currentLine;
+                text = ""; //this is the text we get back, to do the open nlp stuff to
+                while ((currentLine = br.readLine()) != null) {
+                    text += currentLine;
+                }
+                br.close(); //close stream
+
 
             }
             sentences = Sentence.getSentences(text); //to segment sentences use static method from Sentence class
