@@ -86,15 +86,13 @@ public class Sentence {
         }
 
     }
+    /*
+     * updates the lemma list to replace empty lemmas (String capital O) with the token
+     */
     private void updateLemmas() {
-
         for (int i=0; i<lemmas.length; i++) {
-
             if (lemmas[i].equals("O")){
-//                System.out.println(lemmas[i]); //test
-//                System.out.println(tokens[i]); //test
                 lemmas[i] = tokens[i];
-//                System.out.println(lemmas[i] + " CHANGED"); //test
             }
         }
     }
