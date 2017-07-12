@@ -7,32 +7,30 @@ import java.io.IOException;
 
 public class Scraper {
 
-    private String corpus;
+    private String corpus = "";
 
+    
     public Scraper(String url) {
-
-        Document document = null;
         try {
-            document = Jsoup.connect(url).get();
-
+            Document document = Jsoup.connect(url).get();
+            Elements links = document.select("p");
+            for (Element link : links) {
+                corpus += link.text() + " ";
+               // System.out.println(corpus);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        //  corpus += document.select("div").first().text();
-
-        Elements links = document.select("p");
-        for (Element link : links) {
-            corpus += link.text() + " ";
-        }
     }
 
+    
     public String getCorpus() {return corpus;}
 
+    
     public static void main(String[] args) throws Exception {
-        //   Scrape sc = new Scrape("https://en.wikipedia.org/wiki/The_Beatles");
-        //   System.out.println(sc.getCorpus());
+      //  Scraper sc = new Scraper("https://en.wikipedia.org/wiki/Ranking");
     }
 
 }
+
 
