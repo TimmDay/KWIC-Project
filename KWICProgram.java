@@ -1,9 +1,8 @@
 /**
  * This class contructs a linguistic data structure based on the input text, using open nlp tools, upon instantiation.
  * It also contains the methods for searching the data model both by the search term and the lemma of the search term.
- * The private class Search result organises the returned search data for delivery to the visualisation.
- * The open nlp linguistics tools are all contained in the Sentence.java class. Even though the
- * sentence segmentation only occurs here, we decided it was neater to keep it all together
+ * The private class SearchResult organises the returned search data for delivery to make the visualisation stage simpler.
+ * The open nlp linguistics tools are all contained in the Sentence.java class.
  */
 
 import java.util.ArrayList;
