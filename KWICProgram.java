@@ -4,90 +4,101 @@
 
 //todo searchByLemma method.
 // will need to import the lemma machinery here, lemmatize the search term, and then check against the lemmas of each sentence
+/**
+ * This class contructs a linguistic data structure based on the input text, using open nlp tools, upon instantiation.
+ * It also contains the methods for searching the data model both by the search term and the lemma of the search term.
+ * The private class Search result organises the returned search data for delivery to the visualisation.
+ * The open nlp linguistics tools are all contained in the Sentence.java class. Even though the
+ * sentence segmentation only occurs here, we decided it was neater to keep it all together
+ */
 
-import opennlp.tools.sentdetect.SentenceModel;
-import opennlp.tools.sentdetect.SentenceDetectorME;
-
-import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.io.InputStream;
+
 
 public class KWICProgram {
 
-    ArrayList<Sentence> article;
-    String[] sentences;
+    protected ArrayList<Sentence> linguistStatsBucket; // for storing all the linguistic data related to the input text
+    protected String[] sentences;
 
 
-// CONSTRUCTOR
+    /**
+     * CONSTRUCTOR
+     * @param text - a single string of text for the program to break into linguistic components
+     */
     public KWICProgram(String text) {
-
         try {
-            InputStream stream = new FileInputStream("en-sent.bin");
-            SentenceModel model = new SentenceModel(stream);
-            SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
-            sentences = sentenceDetector.sentDetect(text); // takes raw text
-            stream.close();
+            sentences = Sentence.getSentences(text); //to segment sentences use static method from Sentence class
 
-            article = new ArrayList<Sentence>(sentences.length); // create the article, as series of Sentence objs
+            linguistStatsBucket = new ArrayList<Sentence>(sentences.length); // populate linguistic data structure, as series of Sentence objs
             for (String sen : sentences) {
-                Sentence obj = new Sentence(sen); //constructor adds the tokens, etc
-                article.add(obj);
+                Sentence obj = new Sentence(sen);    // the constructor of Sentence class adds the tokens, tags, lemmas, etc
+                linguistStatsBucket.add(obj);       // add this sentence and its data to instance variable
             }
 
         } catch (Exception e) {
-            System.out.println("file not found. model?");
+            e.printStackTrace();
+            System.out.println("error with input string");
         }
     }
 
 
-    public SearchResult searchModelForWord(String searchTerm) {
+    /**
+     * SEARCH FOR WORD
+     * @param searchTerm - a single token string
+     * @return object SearchResult - this contains a collection of structured data relating to the search result
+     * if no search result found, it returns null.
+     */
+    public SearchResult searchForWord(String searchTerm) {
 
         SearchResult result = new SearchResult();
 
-        for (Sentence sen : article) {
+        for (Sentence sen : linguistStatsBucket) {
             String[] tokens = sen.getTokens();
-            boolean tokenFoundInSen = false;
-
+            boolean tokenFoundInSen = false;                            // we want to return only one sentence, even if it contains multiple matches
             for (int i=0; i<tokens.length; i++) {
 
                 if (searchTerm.equalsIgnoreCase(tokens[i])) {
-
-                    if (!tokenFoundInSen) {
+                    if (!tokenFoundInSen) {                             // if sentence already added, don't add again
                         result.sentencesWithWord.add(sen.getSentence());
                         tokenFoundInSen = true;
                     }
 
                     result.countMatches++;
-                    String[] tags = sen.getTags();
+                    String[] tags = sen.getTags();                      // method from Sentence.java class
                     result.posTagsMatches.add(tags[i]);
                     result.posTagsWordsPreceding.add(tags[i-1]);
                     result.posTagsWordsFollowing.add(tags[i+1]);
-                    String[] lemmas = sen.getLemmas();
+                    String[] lemmas = sen.getLemmas();                  // method from Sentence.java class
                     result.lemmaMatches.add(lemmas[i]);
                 }
             }
         }
-
         return result;
     }
 
-    public SearchResult searchModelForLemma(String searchTerm) {
 
-        SearchResult result = new SearchResult();
+    /**
+     * SEARCH FOR LEMMA
+     * finds the lemma of the search term, and matches all words that have the same lemma
+     * eg: a search for 'watches' would match 'watching', 'watched', 'watch', 'watches', etc.
+     * @param searchTerm
+     * @return Object SearchResult. Structured data representing the linguistic info for all matches in text
+     * returns the result of searchForWord() if the search term has no lemma
+     */
+    public SearchResult searchForLemma(String searchTerm) {
 
-        // make lemma out of search term
-        String searchLem = Sentence.getLemma(searchTerm);
+        SearchResult result = new SearchResult();         //searchResults stats added to this object
+
+        String searchLem = Sentence.getLemma(searchTerm); //first, find the lemma of the search term
         if (searchLem.equals("0")) {
-            return null;
+            return searchForWord(searchTerm);             //if search term has no lemma, just search for the input
         }
 
-        // check the lemma lists in all the sentence objects for a match
-        for (Sentence sen : article) {
+        for (Sentence sen : linguistStatsBucket) {        //check the lemma lists in all the sentence objects for a match
 
-            String[] lemmas = sen.getLemmas();
-            boolean lemmaFoundInSen = false;
+            String[] lemmas = sen.getLemmas();            //method from Sentence.java
+            boolean lemmaFoundInSen = false;              //oly add a sentence once, even if it contains multiple matches
 
-            //todo if lemma doesn't exist, abandon search, or just search for the input instead
             for (int i = 0; i < lemmas.length; i++) {
 
                 if (searchLem.equalsIgnoreCase(lemmas[i])) {
@@ -116,9 +127,14 @@ public class KWICProgram {
     }
 
 
+    /**
+     * print search results
+     * mainly for testing purposes. just prints a summary of the SearchResult object to the console
+     * @param word
+     */
     public void printSearchResults(String word) {
 
-        SearchResult result = searchModelForLemma(word); //todo have word vs lemma passed in somehow
+        SearchResult result = searchForLemma(word); //todo have word vs lemma passed in somehow
 
         if (result != null) {
 
@@ -164,6 +180,10 @@ public class KWICProgram {
     }
 
 
+    /*
+     *  This class outlines the data structure for the collecting of linguistic stats that relate to the matches
+     *  of a search of the input text by a search term
+     */
     private class SearchResult {
 
         private ArrayList<String> sentencesWithWord;
@@ -185,7 +205,9 @@ public class KWICProgram {
 
     }
 
-
+    /*
+     * just for testing
+     */
     public static void main(String[] args){
 
         String testString = " Tim Day is an Australian student who watches Australian football. " +
@@ -207,5 +229,6 @@ public class KWICProgram {
 //        for (Sentence sen : test.article) {
 //            sen.printTokensWithTags();
 //        }
+
     }
 }
