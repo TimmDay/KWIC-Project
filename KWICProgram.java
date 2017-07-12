@@ -1,8 +1,4 @@
 /**
- * Created by timday on 7/8/17.
- */
-
-/**
  * This class contructs a linguistic data structure based on the input text, using open nlp tools, upon instantiation.
  * It also contains the methods for searching the data model both by the search term and the lemma of the search term.
  * The private class Search result organises the returned search data for delivery to the visualisation.
