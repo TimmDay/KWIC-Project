@@ -1,8 +1,13 @@
 /**
+ * Created by timday on 7/8/17.
+ */
+
+/**
  * This class contructs a linguistic data structure based on the input text, using open nlp tools, upon instantiation.
  * It also contains the methods for searching the data model both by the search term and the lemma of the search term.
- * The private class SearchResult organises the returned search data for delivery to make the visualisation stage simpler.
- * The open nlp linguistics tools are all contained in the Sentence.java class.
+ * The private class Search result organises the returned search data for delivery to the visualisation.
+ * The open nlp linguistics tools are all contained in the Sentence.java class. Even though the
+ * sentence segmentation only occurs here, we decided it was neater to keep it all together
  */
 
 import java.util.ArrayList;
@@ -12,7 +17,6 @@ public class KWICProgram {
 
     protected ArrayList<Sentence> linguistStatsBucket; // for storing all the linguistic data related to the input text
     protected String[] sentences;
-
 
     /**
      * CONSTRUCTOR
@@ -59,8 +63,12 @@ public class KWICProgram {
                     result.countMatches++;
                     String[] tags = sen.getTags();                      // method from Sentence.java class
                     result.posTagsMatches.add(tags[i]);
-                    result.posTagsWordsPreceding.add(tags[i-1]);
-                    result.posTagsWordsFollowing.add(tags[i+1]);
+                    if (i >= 1) {
+                        result.posTagsWordsPreceding.add(tags[i - 1]); // if loop, to protect against pout of bounds
+                    }
+                    if (i < tags.length-1) {
+                        result.posTagsWordsFollowing.add(tags[i + 1]);
+                    }
                     String[] lemmas = sen.getLemmas();                  // method from Sentence.java class
                     result.lemmaMatches.add(lemmas[i]);
                 }
@@ -83,14 +91,14 @@ public class KWICProgram {
         SearchResult result = new SearchResult();         //searchResults stats added to this object
 
         String searchLem = Sentence.getLemma(searchTerm); //first, find the lemma of the search term
-        if (searchLem.equals("0")) {
-            return searchForWord(searchTerm);             //if search term has no lemma, just search for the input
+        if (searchLem.equals("O")) {
+            searchLem = searchTerm;                       //if search term has no lemma, just search for the input
         }
 
         for (Sentence sen : linguistStatsBucket) {        //check the lemma lists in all the sentence objects for a match
 
             String[] lemmas = sen.getLemmas();            //method from Sentence.java
-            boolean lemmaFoundInSen = false;              //oly add a sentence once, even if it contains multiple matches
+            boolean lemmaFoundInSen = false;              //only add a sentence once, even if it contains multiple matches
 
             for (int i = 0; i < lemmas.length; i++) {
 
@@ -102,17 +110,19 @@ public class KWICProgram {
                     }
 
                     result.countMatches++;
-
                     String[] tags = sen.getTags();
                     result.posTagsMatches.add(tags[i]);
                     if (i >= 1) {
-                        result.posTagsWordsPreceding.add(tags[i - 1]);
+                        result.posTagsWordsPreceding.add(tags[i - 1]); // if loop, to protect against pout of bounds
                     }
-                    if (i < lemmas.length-1) {
+                    if (i < tags.length-1) {
                         result.posTagsWordsFollowing.add(tags[i + 1]);
                     }
+
+                    result.lemmaMatches.add(lemmas[i]); // will obv be all the same here
+
                     String[] tokens = sen.getTokens();
-                    result.tokenMatches.add(tokens[i]);
+                    result.tokenMatches.add(tokens[i]); // add the full token of the lemma match
                 }
             }
         }
@@ -198,6 +208,7 @@ public class KWICProgram {
 
     }
 
+
     /*
      * just for testing
      */
@@ -212,8 +223,8 @@ public class KWICProgram {
         KWICProgram test = new KWICProgram(testString);
 
 //        test.printSearchResults("watches");
-//        test.printSearchResults("Australian");
-        test.printSearchResults("watches");
+        test.printSearchResults("Australian"); // bug, match tokens returns all corresponding to lemma "O"s
+//        test.printSearchResults("watches");
 
         System.out.println(Sentence.getLemma("watches")); // test the get lemma method
 
