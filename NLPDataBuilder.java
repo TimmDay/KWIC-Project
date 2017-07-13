@@ -12,7 +12,10 @@ import java.util.ArrayList;                            // utilities for data sto
 import java.util.HashMap;
 
 
-
+/**
+ * a class to generate linguistic data from a wikipedia webpage, input file or string
+ * and search it by token or lemma for linguistic information
+ */
 public class NLPDataBuilder {
 
     // INSTANCE VARIABLES
@@ -135,9 +138,8 @@ public class NLPDataBuilder {
     }
 
 
-
-
-    // SEARCH METHOD
+    // SEARCH METHODS
+    
     // todo ? how to validate user input? to make sure that they entered one word
     /**
      * search the text for a specific token
@@ -283,14 +285,12 @@ public class NLPDataBuilder {
         // have to make strings -> String[]'s for the NLP tools to use them
         //the input word is a token
         String[] lemma = new String[1];
-
         try {
-            // Get tag
-            String[] token = {word}; //open nlp requires a String[], so just str wont work
+            String[] token = {word}; 
 
             InputStream stream = new FileInputStream("en-pos-maxent.bin");
             POSModel model = new POSModel(stream);
-            POSTaggerME tagger = new POSTaggerME(model);
+            POSTaggerME tagger = new POSTaggerME(model); // Get tag
             String[] tag = tagger.tag(token);
             stream.close();
 
@@ -304,11 +304,8 @@ public class NLPDataBuilder {
             System.out.println("Tag or Lemma Load Error");
             // add stack trace
         }
-
-        System.out.println(lemma[0].getClass().getName());
         return lemma[0];
     }
-
 
     /**
      * main method, for testing
@@ -325,4 +322,3 @@ public class NLPDataBuilder {
         }
     }
 }
-
