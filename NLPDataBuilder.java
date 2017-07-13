@@ -83,7 +83,7 @@ public class NLPDataBuilder {
             String[] lemmas = lemmatizer.lemmatize(tokens, tags);
             sentenceWithLemmas.put(i, lemmas);
         }
-    }
+    } // end constructor
 
 
     /*
@@ -139,7 +139,7 @@ public class NLPDataBuilder {
 
 
     // SEARCH METHODS
-    
+
     // todo ? how to validate user input? to make sure that they entered one word
     /**
      * search the text for a specific token
@@ -286,7 +286,7 @@ public class NLPDataBuilder {
         //the input word is a token
         String[] lemma = new String[1];
         try {
-            String[] token = {word}; 
+            String[] token = {word};
 
             InputStream stream = new FileInputStream("en-pos-maxent.bin");
             POSModel model = new POSModel(stream);
@@ -322,3 +322,4 @@ public class NLPDataBuilder {
         }
     }
 }
+
