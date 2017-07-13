@@ -208,7 +208,7 @@ public class NLPDataBuilder {
     }
 
     /**
-     * Object to contain the data for GUI
+     * INNER CLASS Object to contain the data for GUI
      * this object is returned by the search methods,
      * it is defined to contain all the data that we plan on displaying in the GUI
      * -- if we change our minds on what we want to display, we can just change this part
@@ -309,6 +309,7 @@ public class NLPDataBuilder {
         return lemma[0];
     }
 
+
     /**
      * main method, for testing
      */
@@ -320,7 +321,7 @@ public class NLPDataBuilder {
             result.displayResults();
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }
