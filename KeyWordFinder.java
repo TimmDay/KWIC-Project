@@ -44,15 +44,16 @@ public class KeyWordFinder {
     private HashMap<String, ArrayList<String>> tagCluster;//gold the tags as keys and the words having this tag stored in an ArrayList
     
     public KeyWordFinder(String fileName) throws IOException {
-        //create the stream for reading the file
+        /*//create the stream for reading the file
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
         String currentLine;
         text = "";
         while ((currentLine = br.readLine()) != null) {
-               text += currentLine;
-            }
-        br.close();//close stream
-        
+        text += currentLine;
+        }
+        br.close();//close stream*/
+        Scraper sc = new Scraper("https://en.wikipedia.org/wiki/The_Beatles");
+        text = sc.getCorpus();
         //Loading sentence detector model 
         InputStream inputStream = new FileInputStream("en-sent.bin");
         SentenceModel sentencModel = new SentenceModel(inputStream);
@@ -75,22 +76,32 @@ public class KeyWordFinder {
        //get the token from each sentence
         WhitespaceTokenizer token = WhitespaceTokenizer.INSTANCE;
         //create lammatizer
-        InputStream inputStreamLem = new FileInputStream("lemmatizer.bin");
-        DictionaryLemmatizer lemmatizer = new DictionaryLemmatizer(inputStreamLem);
+      //  InputStream inputStreamLem = new FileInputStream("lemmatizer.bin");
+       // DictionaryLemmatizer lemmatizer = new DictionaryLemmatizer(inputStreamLem);
+        
+        //get lemma
+            InputStream stream2 = new FileInputStream("en-lemmatizer.txt");
+            DictionaryLemmatizer lemmatizer = new DictionaryLemmatizer(stream2);
+            //lemmas = lemmatizer.lemmatize(token, tag);
+            
         
         wordAndTags = new HashMap<>();
         numOfTokens = 0;
         wordFreq = new HashMap<>();
         tagCluster = new HashMap<>();
         tagFreq = new HashMap<>();
-      // LemmasWords = new HashMap<>();
+       LemmasWords = new HashMap<>();////////////////////
         tokensAndTagsPerSentece = new ArrayList<>();
         for (String sentence : sentences) {//for each sentences
             sentence = correctMarks(sentence).trim();
             String[] tokens = token.tokenize(sentence);//split the current sentence....
             String[] tagsOfthisSent = tagger.tag(tokens);//... and generate the coresponding tags
-            //String[] lemmas = lemmatizer.lemmatize(tokens, tagsOfthisSent);
-            
+            String[] lemmas = lemmatizer.lemmatize(tokens, tagsOfthisSent);/////////////
+             for (int i=0; i<lemmas.length; i++) {
+            if (lemmas[i].equals("O")){
+                lemmas[i] = tokens[i];
+            }
+        }
             
             POSSample sample = new POSSample(tokens, tagsOfthisSent);//holds each sentence and tags together
             tokensAndTagsPerSentece.add(sample.toString());
@@ -101,7 +112,7 @@ public class KeyWordFinder {
                 
                 String thisWord = tokens[i].trim();
                 String thisTag = tagsOfthisSent[i].trim();
-                //String lem = lemmas[i].trim();
+                String lem = lemmas[i].trim();////////////////
                 if(wordAndTags.containsKey(thisWord)){
                     String frWord = thisWord.toLowerCase();//for freaqueny -> no case sensitive
                     wordFreq.put(frWord, wordFreq.get(frWord) + 1);//increment by 1
@@ -135,7 +146,7 @@ public class KeyWordFinder {
                 }
                 
                
-                /*                if(LemmasWords.containsKey(lem)){
+                 if(LemmasWords.containsKey(lem)){
                 if(!LemmasWords.get(lem).contains(thisWord))
                 LemmasWords.get(lem).add(thisWord);
                 }
@@ -145,14 +156,15 @@ public class KeyWordFinder {
                 list.add(thisWord);
                 LemmasWords.put(lem, list);
                 }
-                */
+                
         
                 
             }
         }
             inputStream.close();
             inputStream2.close();
-            inputStreamLem.close();;
+            stream2.close();
+          //  inputStreamLem.close();;
         }
         
         
@@ -189,31 +201,25 @@ public class KeyWordFinder {
     }
     return map;
     }
-    
-    public String getLemma(String word, String pos) throws FileNotFoundException, IOException{
-    //create stream Lemmatizer
-    InputStream inputStreamLem = new FileInputStream("lemmatizer.bin");
-    DictionaryLemmatizer lemmatizer = new DictionaryLemmatizer(inputStreamLem);
+   */
+    public String getLemma(String word) throws FileNotFoundException, IOException{
+   
     if(word == null)
     return null;
     String val = "";
-    for(String e : wordAndTags.keySet()){
-    String[] w = {word};
-    if(findtag2(word).contains(pos))
+    for(String e : LemmasWords.keySet()){
+    
+    if(LemmasWords.get(e).contains(word))
     {
-    String[] t = {pos};
-    String[] rsl = lemmatizer.lemmatize(w, t);
-    if(rsl[0].length() > 1)
-    val =  rsl[0];
-    else
-    val = word;
+    
+    val = e;
     }
     
     
     }
-    inputStreamLem.close();
+    
     return val;
-    }*/
+    }
 
   
     private static String deleteMarks(String word) {
@@ -271,6 +277,15 @@ public class KeyWordFinder {
             System.out.println(++i + elen);
         }
     }
+    public String printSeAsString(){
+        int i = 0;
+        String text = "";
+        for(String elen : sentences){
+            elen = correctMarks(elen);
+            text += ++i + elen + "\n";
+        }
+        return text;
+    }
     public void printAlltokensAndTags(){
        for(String key : wordAndTags.keySet())
             System.out.print( "\"" + key + "\": " + wordAndTags.get(key) + "/ /");
@@ -293,11 +308,11 @@ public class KeyWordFinder {
     public void printTokensAndTagsPerSentece(){
         tokensAndTagsPerSentece.forEach(x -> System.out.println(x));
     }
-    /*    public void printLemmasAndWords(){
+     public void printLemmasAndWords(){
     LemmasWords.keySet().forEach((key) -> {
     System.out.print( "\"" + key + "\": " + tagFreq.get(key) + "/ /");
     });
-    }*/
+    }
     /**
      * getter method 
      * @return the number of distickt tags in this document
@@ -334,6 +349,7 @@ public class KeyWordFinder {
     public void findSentencesOfWord(String s){
         if(s == null)
             return;
+        
         ArrayList<String> list = new ArrayList<>();
         for(String sent : sentences){
             if(sent.contains(s))
@@ -342,6 +358,32 @@ public class KeyWordFinder {
         list.forEach((elem) -> {
             System.out.println(elem);
         });
+    }
+    
+    public String findSentencesOfWord2(String s){
+        if(s == null)
+            return null;
+        String rsl = "";
+        ArrayList<String> list = new ArrayList<>();
+        for(String sent : sentences){
+            if(sent.contains(s))
+                list.add(sent);
+        }
+        for(String elem : list)
+            rsl += elem + "\n\n\n";
+     return rsl;
+    }
+    public ArrayList<String> findSentencesOfWord3(String s){
+        if(s == null)
+            return null;
+        
+        ArrayList<String> list = new ArrayList<>();
+        for(String sent : sentences){
+            if(sent.contains(s))
+                list.add(sent);
+        }
+        
+     return list;
     }
     public void findWordAndItsNeighbours(String s, int numPrev, int numAfter) {
         if (s == null) {
@@ -473,7 +515,8 @@ public class KeyWordFinder {
             System.out.println();
            my.printTokensAndTagsPerSentece();
            System.out.println();
-           //System.out.println(my.getLemma("plans", "NNS"));
+           System.out.println(my.getLemma("owned"));
+           
           
         } catch (IOException ex) {
             Logger.getLogger(KeyWordFinder.class.getName()).log(Level.SEVERE, null, ex);
