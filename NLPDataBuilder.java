@@ -34,14 +34,6 @@ public class NLPDataBuilder {
     private HashMap<String, Integer> tagWithTokens;           //key: tag, value: list of tokens with that tag
                                                               // todo need this? purpose: searching by tag, for tokens
 
-// TODO
-//    // DATA FOR DOCUMENT-WIDE STATISTICS
-//    private HashMap<String, Integer> tokenFreq;                       //key: token, value: freq
-//    private HashMap<String, Integer> tokenFreq;                       //key: token, value: freq
-//// ?    private HashMap<String, ArrayList<String>> tagCluster;          //key: tag, value: list of tokens with this tag
-//    private int totalTokensInDocument;
-//    // total number sentences = sentences.length
-
 
     // CONSTRUCTOR
 
