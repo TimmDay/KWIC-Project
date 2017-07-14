@@ -27,11 +27,17 @@ public class NLPDataBuilder {
     private HashMap<Integer, String[]> sentenceWithLemmas;    // key: index of each sentence in sentences, value: list of lemmas in that sentence
 
 
+    // DATA FOR DOCUMENT-WIDE STATS
+    private int totalTokensInDocument;
+    private HashMap<String, Integer> tokenFreq;               //key: token, value: freq
+    private HashMap<String, Integer> tagFreq;                 //key: token, value: freq
+    private HashMap<String, Integer> tagWithTokens;           //key: tag, value: list of tokens with that tag
+                                                              // todo need this? purpose: searching by tag, for tokens
 
 // TODO
 //    // DATA FOR DOCUMENT-WIDE STATISTICS
 //    private HashMap<String, Integer> tokenFreq;                       //key: token, value: freq
-//    private HashMap<String, Integer> tagFreq;                         //key: POStag, value: freq
+//    private HashMap<String, Integer> tokenFreq;                       //key: token, value: freq
 //// ?    private HashMap<String, ArrayList<String>> tagCluster;          //key: tag, value: list of tokens with this tag
 //    private int totalTokensInDocument;
 //    // total number sentences = sentences.length
@@ -50,10 +56,18 @@ public class NLPDataBuilder {
         text = this.formatText(text, command); // gets the string from the url/file, and updates text appropriately
         this.loadSentences(text); // this will give us the indexes and sentences that we will use to reference everything else
 
-        // instantiate instance variables
+        // instantiate instance variables - for search
         sentenceWithTokens = new HashMap<>();
         sentenceWithPOS = new HashMap<>();
         sentenceWithLemmas = new HashMap<>();
+
+        // instantiate instance variables - for document statistics.
+        // but only fill them when Doc stats button clicked, to save processing time
+        totalTokensInDocument = 0;   // purpose: for calculating token/tag densities. the denominator in percentage calcs
+        tokenFreq = new HashMap<>(); //todo purpose? we could display top 5 most common words?
+        tagFreq = new HashMap<>();   //todo purpose? we could display top 5 common tags?
+
+        // todo what about named entity recognition?
 
 
         // SET UP THE OPEN NLP TOOLS
@@ -72,15 +86,15 @@ public class NLPDataBuilder {
         lemStream.close();
 
 
-        // use open nlp to set up INSTANCE VARIABLE hash maps (one sentence at a time)
+        // use open nlp to set up INSTANCE VARIABLEs hash maps (one sentence at a time)
         for (int i=0; i < sentences.length; i++) {
-            String[] tokens = tokenizer.tokenize(sentences[i]);
+            String[] tokens = tokenizer.tokenize(sentences[i]);    // TOKENIZER
             sentenceWithTokens.put(i, tokens);
 
-            String[] tags = tagger.tag(tokens);
+            String[] tags = tagger.tag(tokens);                    // TAGGER
             sentenceWithPOS.put(i, tags);
 
-            String[] lemmas = lemmatizer.lemmatize(tokens, tags);
+            String[] lemmas = lemmatizer.lemmatize(tokens, tags);  // LEMMATIZER
             sentenceWithLemmas.put(i, lemmas);
         }
     } // end constructor
@@ -209,6 +223,53 @@ public class NLPDataBuilder {
         return result;
     }
 
+
+    // DOCUMENT-WIDE STATISTICS
+
+
+    /**
+     * a method to calculate the instance variables for the statistics summary in the GUI display
+     * it is done here instead of in the constructor, to save some processing time in the constructor
+     * the user only gets it if they ask for it by clicking the button
+     */
+    public void generateDocumentStats(){
+
+        for (int i=0; i < sentences.length; i++) {
+
+            String[] tokens = sentenceWithTokens.get(i);
+            totalTokensInDocument += tokens.length;
+            for (String tok : tokens){
+                if (!tokenFreq.containsKey(tok)){
+                    tokenFreq.put(tok,1);
+                } else {
+                    tokenFreq.replace(tok,(tokenFreq.get(tok)+1));
+                }
+            }
+
+            String[] tags = sentenceWithPOS.get(i);
+            for (String tag : tags){
+                if (!tagFreq.containsKey(tag)) {
+                    tagFreq.put(tag,1);
+                } else {
+                    tagFreq.replace(tag,(tagFreq.get(tag)+1));
+                }
+            }
+        }
+    }
+
+
+    /**
+     * test method for displaying document stats
+     * -- (we will need a StatsResult inner class to deliver the data to the GUI for display)
+     */
+    public void displayDocumentStats() {
+
+        //todo: display top 5 tokens by freq? as percentage
+        // display top 5 tags by freq? as percentage
+        // display top 3 named entities (will need to do the openNLP named entity recognition in generateDocumentStats()
+    }
+
+
     /**
      * INNER CLASS Object to contain the data for GUI
      * this object is returned by the search methods,
@@ -313,9 +374,27 @@ public class NLPDataBuilder {
     public static void main(String[] args) {
         try {
             NLPDataBuilder test = new NLPDataBuilder("https://en.wikipedia.org/wiki/The_Beatles", "url");
+
+            System.out.println("SEARCH RESULTS:");
 //            SearchResult result = test.searchByToken("engineer");
             SearchResult result = test.searchByLemma("engineer");
             result.displayResults();
+
+
+            System.out.println("\n\n\nDOCUMENT STATS - tests");
+            test.generateDocumentStats(); // DOCUMENT STATS button was clicked by user. do the extra processing
+            System.out.println("TOTAL TOKENS IN DOCUMENT: " + test.totalTokensInDocument);
+            System.out.println("FREQ OF 'BUT': " + test.tokenFreq.get("but"));
+            System.out.println("FREQ OF 'NNP': " + test.tagFreq.get("NNP"));
+
+
+//            for (String tok : test.tokenFreq.keySet()){
+//                System.out.println("KEY: " + tok + "  VALUE: " + test.tokenFreq.get(tok));
+//            }
+
+//            for (String tag : test.tagFreq.keySet()){
+//                System.out.println("KEY: " + tag + "  VALUE: " + test.tagFreq.get(tag));
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();
