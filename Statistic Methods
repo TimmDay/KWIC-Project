@@ -1,0 +1,45 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+
+/**
+ * Created by mareilewinkler on 18.07.17.
+ */
+public class StatisticMethods {
+
+
+    public String documentWideStats() {
+
+        String result = "";
+        String result2 = "";
+        String totalNumberofTokens = "Total number of tokens in the text:" + " " + numOfTokens();
+        ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> tokenList = new ArrayList<>();
+
+
+        Object[] a = tagFreq.entrySet ( ).toArray ( );
+        Arrays.sort ( a, ( o1, o2 ) -> ( ( Map.Entry <String, Integer> ) o2 ).getValue ( )
+                .compareTo ( ( ( Map.Entry <String, Integer> ) o1 ).getValue ( ) ) );
+        for ( Object e : a ) {
+            list.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) + " "
+                    + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times" + "\n" );
+        }
+
+
+        for ( int i = 0 ; i < 5 ; i++ ) result += list.get ( i );
+
+        Object[] b = wordFreq.entrySet ( ).toArray ( );
+        Arrays.sort ( b, ( Object o2, Object o3 ) -> ( ( Map.Entry <String, Integer> ) o3 ).getValue ( )
+                .compareTo ( ( ( Map.Entry <String, Integer> ) o2 ).getValue ( ) ) );
+        for ( Object e : b ) {
+            tokenList.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) + " "
+                    + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times" + "\n" );
+        }
+
+        for ( int i = 0 ; i < 5 ; i++ ) result2 += tokenList.get ( i );
+
+
+        return "\n" + totalNumberofTokens + "\n" + "\n" + "Top 5 POS Tags:" + "\n" + result + "\n" + "Top 5 Tokens in Text:" + "\n" + result2;
+    }
+
+}
