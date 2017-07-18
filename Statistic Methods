@@ -44,5 +44,214 @@ public String documentWideStats() {
 
         return "\n" + totalNumberofTokens + "\n" + "\n" + "Top 5 POS Tags in the Text:" + "\n" + result + "\n" + "Top 5 Tokens in the Text (with more than 3 letters):" + "\n" + result2;
         } 
+        
+  public String statisticsOfToken(String aWord) {
+
+        String token = "";
+        String resu = "";
+        String result = "";
+        String resul = "";
+        String formattedResult = "";
+        String resulte = "";
+        String resulten = "";
+        ArrayList<String> tags = new ArrayList<String>();
+        ArrayList<String> prevWord = new ArrayList<>();
+        ArrayList<String> nextWord = new ArrayList<>();
+        ArrayList<String> prec = new ArrayList<>();
+        ArrayList<String> next = new ArrayList<>();
+        ArrayList<String> nextP = new ArrayList<>();
+        ArrayList<ArrayList<String>> dict = new ArrayList<>();
+        ArrayList<ArrayList<String>> dict2 = new ArrayList<>();
+        ArrayList<String> hel = new ArrayList<>();
+        ArrayList<String> tes = new ArrayList<>();
+        ArrayList<String> tesi = new ArrayList<>();
+
+
+
+
+        token = "Frequency of the keyword in the text:" + " " +  frequencyOfWord(aWord) + " " + "out of" + " " + numOfTokens();
+
+
+        if (tokenTags.containsKey(aWord))
+
+        tags = tokenTags.get(aWord);
+
+
+        for (String temp : tags) {
+
+        result += temp + " " + getFrequencyOfTag ( temp ) + "\n";
+        formattedResult += temp + " " + result.format ( "%.02f", getFrequencyOfTag ( temp ) ) + "%" + " " + "out of the total number of POS" + "\n";
+
+        }
+
+        for (int i = 1; i < totalToken.size(); i++)
+        {  if(aWord.equalsIgnoreCase(totalToken.get(i)))
+        prevWord.add(totalToken.get(i-1).toLowerCase()); }
+
+        HashMap<String, Integer> occurrences = new HashMap<>();
+
+        for ( String word :prevWord) {
+        Integer oldCount = occurrences.get(word);
+        if ( oldCount == null ) {
+        oldCount = 0;
+        }
+        occurrences.put(word, oldCount + 1);
+        }
+
+        Object[] b = occurrences.entrySet( ).toArray ( );
+        Arrays.sort ( b, ( Object o2, Object o3 ) -> ( ( Map.Entry <String, Integer> ) o3 ).getValue ( )
+        .compareTo ( ( ( Map.Entry <String, Integer> ) o2 ).getValue ( ) ) );
+        for ( Object e : b ) {
+        prec.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+        + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" );
+        }
+        List<String> res = prec.subList(0, 5);
+        for (String e: res) resu += e;
+
+
+
+        for (int i = 1; i < totalToken.size(); i++)
+        {  if(aWord.equalsIgnoreCase(totalToken.get(i)))
+        nextWord.add(totalToken.get(i+1).toLowerCase()); }
+
+        HashMap<String, Integer> occur = new HashMap<>();
+
+        for ( String word :nextWord) {
+        Integer oldC = occur.get(word);
+        if ( oldC == null ) {
+        oldC = 0;
+        }
+        occur.put(word, oldC + 1);
+        }
+
+        Object[] t = occur.entrySet( ).toArray ( );
+        Arrays.sort ( t, ( Object o4, Object o5 ) -> ( ( Map.Entry <String, Integer> ) o5 ).getValue ( )
+        .compareTo ( ( ( Map.Entry <String, Integer> ) o4 ).getValue ( ) ) );
+        for ( Object e : t ) {
+
+        if (((( Map.Entry <String, Integer> ) e ).getValue ( )) == 1 )
+        next.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+        + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "time in the text" + "\n" ) ;
+
+        else next.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+        + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" ) ;
+        }
+
+        List<String> re = next.subList(0, 5);
+        for (String e: re) resul += e;
+
+
+
+
+        for (String e : prevWord)
+        { if (tokenTags.containsKey(e))
+        {
+        dict.add(tokenTags.get(e)); } }
+
+        for (ArrayList<String> g : dict) {
+
+        for (String h : g) {
+        hel.add(h);
+        }
+        }
+
+        HashMap<String, Integer> counters = new HashMap<>();
+        for (String i : hel)
+        { if (counters.containsKey (i))
+        {
+        counters.put(i, counters.get(i)+1); }
+        else
+        counters.put(i, 1);
+
+        }
+
+        Object[] m = counters.entrySet( ).toArray ( );
+        Arrays.sort ( m, ( Object o5, Object o6 ) -> ( ( Map.Entry <String, Integer> ) o6 ).getValue ( )
+        .compareTo ( ( ( Map.Entry <String, Integer> ) o5 ).getValue ( ) ) );
+        for ( Object e : m ) {
+
+        if (((( Map.Entry <String, Integer> ) e ).getValue ( )) == 1 && ((( Map.Entry <String, Integer> ) e ).getKey ( )).length () > 1 )
+        tes.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+        + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "time in the text" + "\n" ) ;
+
+        else if (((( Map.Entry <String, Integer> ) e ).getKey ( )).length () > 1) tes.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+        + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" ) ;
+        }
+
+
+
+        List<String> rem = tes.subList (0, 5);
+        for (String e: rem) resulte += e;
+
+
+
+        //Most Likely to be following Tag of the keyword:
+
+
+        for (String e : nextWord)
+        { if (tokenTags.containsKey(e))
+        {
+        dict2.add(tokenTags.get(e)); } }
+
+        for (ArrayList<String> g : dict2) {
+
+        for (String h : g) {
+        nextP.add(h);
+        }
+        }
+
+        HashMap<String, Integer> countes = new HashMap<>();
+        for (String i : nextP)
+        { if (countes.containsKey (i))
+        {
+        countes.put(i, countes.get(i)+1); }
+        else
+        countes.put(i, 1);
+
+        }
+
+        Object[] z = countes.entrySet( ).toArray ( );
+        Arrays.sort ( z, ( Object o8, Object o9 ) -> ( ( Map.Entry <String, Integer> ) o9 ).getValue ( )
+        .compareTo ( ( ( Map.Entry <String, Integer> ) o8 ).getValue ( ) ) );
+        for ( Object e : z ) {
+
+        if (((( Map.Entry <String, Integer> ) e ).getValue ( )) == 1 && ((( Map.Entry <String, Integer> ) e ).getKey ( )).length () > 1 )
+        tesi.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+        + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "time in the text" + "\n" ) ;
+
+        else if (((( Map.Entry <String, Integer> ) e ).getKey ( )).length () > 1) tesi.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+        + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" ) ;
+        }
+
+        List<String> remo = tesi.subList(0, 5);
+        for (String e: remo) resulten += e;
+
+
+
+
+        return token + "\n" + "\n" + "Most likely to be the preceding Token of the keyword:\n" + resu + "\n" +  "Most likely to be the following Token of the keyword:\n" + resul + "\n" +
+        "Frequency of the POS tag of the keyword:\n" + formattedResult + "\n" +
+        "Most likely to be preceeding Tag of the keyword (More than 1 character in length):" + "\n" + resulte
+        + "\n" + "Most likely to be following Tag of this keyword (More than 1 character in length):" + "\n" + resulten;
+
+
+}
+
+
+}      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
 }
