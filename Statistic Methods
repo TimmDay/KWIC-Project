@@ -7,8 +7,7 @@ import java.util.Map;
  */
 public class StatisticMethods {
 
-
-    public String documentWideStats() {
+public String documentWideStats() {
 
         String result = "";
         String result2 = "";
@@ -19,27 +18,31 @@ public class StatisticMethods {
 
         Object[] a = tagFreq.entrySet ( ).toArray ( );
         Arrays.sort ( a, ( o1, o2 ) -> ( ( Map.Entry <String, Integer> ) o2 ).getValue ( )
-                .compareTo ( ( ( Map.Entry <String, Integer> ) o1 ).getValue ( ) ) );
+        .compareTo ( ( ( Map.Entry <String, Integer> ) o1 ).getValue ( ) ) );
         for ( Object e : a ) {
-            list.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) + " "
-                    + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times" + "\n" );
+
+        list.add( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) + " "
+        + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times" + "\n" );
         }
 
 
-        for ( int i = 0 ; i < 5 ; i++ ) result += list.get ( i );
+        for ( int i = 0 ; i < 5 ; i++ ) {
+
+        result += list.get ( i );}
 
         Object[] b = wordFreq.entrySet ( ).toArray ( );
         Arrays.sort ( b, ( Object o2, Object o3 ) -> ( ( Map.Entry <String, Integer> ) o3 ).getValue ( )
-                .compareTo ( ( ( Map.Entry <String, Integer> ) o2 ).getValue ( ) ) );
+        .compareTo ( ( ( Map.Entry <String, Integer> ) o2 ).getValue ( ) ) );
         for ( Object e : b ) {
-            tokenList.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) + " "
-                    + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times" + "\n" );
+        if ((( ( Map.Entry <String, Integer> ) e ).getKey( )).length() > 3)
+        tokenList.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) + " "
+        + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times" + "\n" );
         }
 
         for ( int i = 0 ; i < 5 ; i++ ) result2 += tokenList.get ( i );
 
 
-        return "\n" + totalNumberofTokens + "\n" + "\n" + "Top 5 POS Tags:" + "\n" + result + "\n" + "Top 5 Tokens in Text:" + "\n" + result2;
-    }
+        return "\n" + totalNumberofTokens + "\n" + "\n" + "Top 5 POS Tags in the Text:" + "\n" + result + "\n" + "Top 5 Tokens in the Text (with more than 3 letters):" + "\n" + result2;
+        } 
 
 }
