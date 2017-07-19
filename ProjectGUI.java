@@ -29,10 +29,12 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -73,6 +75,7 @@ public class ProjectGUI {
     private JButton tagged_SentButton, tokensButton, posButton, sentencesButton;
     private DefaultComboBoxModel<String> tagsModel, tokensModel, lemmasModel, keywordmodel;
     private String savedtext = null;
+    private JList<String> histList;
 
     public ProjectGUI() {
         frame = new JFrame("Java Project");
@@ -173,20 +176,33 @@ public class ProjectGUI {
         m = new JMenuItem("Exit");
         m.addActionListener(this);
         memoMenu.add(m);*/
-        JMenu toolMenu = new JMenu("Tools");
+        JMenu historyMenu = new JMenu("History");
+        historyMenu.add(Box.createVerticalStrut(10));
 
-        m = new JMenuItem("Font");
+        JMenu view = new JMenu("view history");
+        DefaultListModel<String> aListModel = new DefaultListModel<>();
+        histList = new JList<>(aListModel);
+        JScrollPane listPane = new JScrollPane(histList);
+        listPane.setPreferredSize(new Dimension(120, 100));
+        listPane.setMaximumSize(new Dimension(120, 100));
+        view.add(listPane);
         ///m.addActionListener(...);
-        toolMenu.add(m);
+        historyMenu.add(view);
+        historyMenu.add(Box.createVerticalStrut(10));
 
-        m = new JMenuItem("Color");
-        ///m.addActionListener(...);
-        toolMenu.add(m);
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.add(Box.createVerticalStrut(10));
+
+        m = new JMenuItem("Info");
+        helpMenu.add(m);
+        helpMenu.add(Box.createVerticalStrut(10));
 
         JMenuBar mBar = new JMenuBar();
         mBar.add(fileMenu);
         mBar.add(Box.createHorizontalStrut(10));
-        mBar.add(toolMenu);
+        mBar.add(historyMenu);
+        mBar.add(Box.createHorizontalStrut(10));
+        mBar.add(helpMenu);
 
         frame.setJMenuBar(mBar);
     }
@@ -342,7 +358,7 @@ public class ProjectGUI {
 
         //two ComboBoxs
         //DefaultComboBoxModel prev = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
-        numPrev = new JComboBox(new Integer[]{1,2,3,4,5,6,7,8,9,10}); //instance variable!!
+        numPrev = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instance variable!!
         numPrev.setSelectedIndex(2);//default number
         numPrev.setToolTipText("Enter only digits");
         numPrev.setMinimumSize(new Dimension(50, 20));
@@ -353,7 +369,7 @@ public class ProjectGUI {
         //numPrev.addActionListener(new RadioButtonsListener());
 
         // DefaultComboBoxModel after = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
-        numAfter = new JComboBox(new Integer[]{1,2,3,4,5,6,7,8,9,10}); //instance variable!!
+        numAfter = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instance variable!!
         numAfter.setSelectedIndex(2);//default number
         numAfter.setToolTipText("Enter only digits");
         numAfter.setMinimumSize(new Dimension(50, 20));
@@ -433,7 +449,7 @@ public class ProjectGUI {
 
         //add this area into JScrollPane
         JScrollPane leftListPane = new JScrollPane(leftResults);
-       
+
         leftResults.setEditable(true);
 
         //create the topPanel TextArea
@@ -441,7 +457,7 @@ public class ProjectGUI {
         rightUpResults.setEditable(false);
         //add this area into JScrollPane
         JScrollPane rightUpListPane = new JScrollPane(rightUpResults);
-        
+
         rightDownResults = new JTextArea("Search results", 10, 20);
         rightDownResults.setEditable(false);
         //add this area into JScrollPane
@@ -452,8 +468,7 @@ public class ProjectGUI {
         rightArea.add(rightUpListPane);
         rightArea.add(Box.createVerticalStrut(5));
         rightArea.add(rightDownListPane);
-        
-        
+
         //add all areas in the main panel
         JPanel panel = new JPanel();
 
@@ -523,8 +538,8 @@ public class ProjectGUI {
         labelPanel.add(tokensButton);
         labelPanel.add(Box.createVerticalStrut(10));
         labelPanel.add(posButton);
-       // labelPanel.add(Box.createVerticalStrut(10));
-       // labelPanel.add(sentencesButton);
+        // labelPanel.add(Box.createVerticalStrut(10));
+        // labelPanel.add(sentencesButton);
         labelPanel.add(Box.createVerticalStrut(10));
         labelPanel.add(tagged_SentButton);
         labelPanel.add(Box.createVerticalStrut(15));
@@ -635,7 +650,7 @@ public class ProjectGUI {
                     String command = (String) inputText.getSelectedItem();
 
                     if (command.equals("Typed text")) {
-                        
+
                         project = new DataModelEd(leftResults.getText(), command);
                     } else {
                         project = new DataModelEd(filename.getText(), command);
@@ -689,8 +704,9 @@ public class ProjectGUI {
         /*for (String lem : project.getLemmaSentences().keySet()) {
         lemmasModel.addElement(lem);
         }*/
-        for(String lem : project.getSentencesWithLemma())
+        for (String lem : project.getSentencesWithLemma()) {
             lemmasModel.addElement(lem);
+        }
         lemmas.setEnabled(true);
 
         // 6) enable the buttons of Ducument stats group
@@ -701,8 +717,7 @@ public class ProjectGUI {
 
         // 7) initially tetx for keyword field
         keyword.setText("Enter a keyword");
-        
-      
+
     }
 
     /**
@@ -717,7 +732,7 @@ public class ProjectGUI {
             //leftResults.setFont(new Font("Monaco", Font.PLAIN, 12));
             leftResults.setMargin(new Insets(30, 40, 30, 40));
             leftResults.setCaretPosition(5);
-            
+
             rightUpResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
             //leftResults.setFont(new Font("Monaco", Font.PLAIN, 12));
             rightUpResults.setMargin(new Insets(10, 10, 10, 10));
@@ -725,17 +740,22 @@ public class ProjectGUI {
 
             String command = (String) keywordList.getSelectedItem();
 
+            DefaultListModel<String> aListModel = (DefaultListModel<String>) histList.getModel();
+            aListModel.addElement(keyword.getText());
+
             if (activate.isSelected()) {
-                Integer numPrevious = (Integer)numPrev.getSelectedItem();
-                Integer numAfter = (Integer)numPrev.getSelectedItem();
+                Integer numPrevious = (Integer) numPrev.getSelectedItem();
+                Integer numAfter = (Integer) numPrev.getSelectedItem();
                 if (keyword.getText() == null) {
                     JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
                 } else if (command.equals("Token")) {
+
                     String key = keyword.getText().toLowerCase();
                     if (!project.getTokenTags().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
                     } else {
                         leftResults.setText(project.findTOKENAndItsNeighbours(key, numPrevious, numAfter));
+                        rightUpResults.setText(project.statisticsOfToken(key));
                         try {
                             highlightKeyword3(leftResults, key);
                         } catch (BadLocationException ex) {
@@ -743,6 +763,7 @@ public class ProjectGUI {
                         }
                     }
                 } else if (command.equals("Lemma")) {
+
                     String lem = keyword.getText().trim().toLowerCase();// project.getLemma(keyword.getText().trim());
                     if (!project.getLemmaSentences().keySet().contains(lem)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a lemma in this Document");
@@ -753,7 +774,7 @@ public class ProjectGUI {
                             highlightKeywordWithLIST(leftResults, list);
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
-                        }catch (IOException ex) {
+                        } catch (IOException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
@@ -769,7 +790,7 @@ public class ProjectGUI {
                             highlightKeywordWithLIST(leftResults, list);
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
-                        }catch (IOException ex) {
+                        } catch (IOException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
@@ -786,7 +807,7 @@ public class ProjectGUI {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
                     } else {
 
-                        leftResults.setText(project.getSentWithThisToken_2(key));
+                        leftResults.setText(project.getSentWithThisToken(key)); /////
                         rightUpResults.setText(project.statisticsOfToken(key));
                         try {
                             highlightKeyword3(leftResults, key);
@@ -814,11 +835,12 @@ public class ProjectGUI {
                         JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
                     } else {
 
-                        leftResults.setText(project.getSentWithThisPOS_2(keyword.getText()));
-                        ArrayList<String> list = project.getTokensHavingThisPOSTag(keyword.getText());
+                      //  leftResults.setText(project.getSentWithThisPOS_2(keyword.getText()));
+                      //  ArrayList<String> list = project.getTokensHavingThisPOSTag(keyword.getText());
 
                         try {
-                            highlightKeywordWithLIST(leftResults, list);
+                            highlightKeywordForPOSSSSSSS(leftResults,keyword.getText() );
+                           // highlightKeywordWithLIST(leftResults, list);
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -876,6 +898,63 @@ public class ProjectGUI {
                 }
             }
         }
+
+    }
+    private void highlightKeywordForPOSSSSSSS(JTextArea area, String pos) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
+
+        Document doc = area.getDocument();
+
+        String text = doc.getText(0, doc.getLength()).toLowerCase();
+        
+        area.setText("");
+        int num = 1;
+        for(int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++){
+             ArrayList<String> sublist = new ArrayList<>();
+            for(int i = 0; i< project.getSentenceWithPOS().get(j).length; i++){
+                if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
+                    area.append(num + ". ");
+                    for(int k = 0; k<= i; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+                     highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
+                      for(int k = i +1; k< project.getSentenceWithPOS().get(j).length; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+                      area.append("\n");
+                       num++; 
+               }
+                 //ArrayList<String> sublist = new ArrayList<>();
+                if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
+                  
+                    area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i] 
+                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] + ")\n");
+
+                }
+               
+               //area.append("\n");
+            }
+            
+          // info.add(sublist);
+        }
+
+        /*String[] textarray = area.getText().split(" ");
+        for (String pattern : list) {
+        pattern = pattern.toLowerCase();
+        String p = " " + pattern + " ";
+        for (int i = 0; i < textarray.length; i++) {
+        int pos = 0;
+        // Search for pattern
+        while ((pos = text.indexOf(p, pos)) >= 0) {
+        
+        highlighter.addHighlight(pos + 1, pos + p.length() - 1, painter);
+        pos += p.length();
+        
+        }
+        }
+        }*/
 
     }
 
@@ -958,31 +1037,31 @@ public class ProjectGUI {
 
         }
     }
-    
-     /**
+
+    /**
      * private class LDButtonHandler for handling the event fired by load
      * buttton
      */
     private class SAVEButtonHandler implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            
-            //prompt the user to enter a name for the file
-            if(savedtext == null) {
-                savedtext = JOptionPane.showInputDialog(frame, "Enter a file name which the elements are stored in");
-              if (new File(savedtext).exists()) { //if file already exists
-                //ask the user if he wants to overwrite it
-                if (JOptionPane.showConfirmDialog(frame, "A file with this name exists. Do you want to replace the old file?")
-                        == JOptionPane.YES_OPTION) {
-                    storeInFile(savedtext);
 
-                } else {
-                    savedtext = JOptionPane.showInputDialog(frame, "choose another name for the file");
-                    if (savedtext != null) {
+            //prompt the user to enter a name for the file
+            if (savedtext == null) {
+                savedtext = JOptionPane.showInputDialog(frame, "Enter a file name which the elements are stored in");
+                if (new File(savedtext).exists()) { //if file already exists
+                    //ask the user if he wants to overwrite it
+                    if (JOptionPane.showConfirmDialog(frame, "A file with this name exists. Do you want to replace the old file?")
+                            == JOptionPane.YES_OPTION) {
                         storeInFile(savedtext);
+
+                    } else {
+                        savedtext = JOptionPane.showInputDialog(frame, "choose another name for the file");
+                        if (savedtext != null) {
+                            storeInFile(savedtext);
+                        }
                     }
                 }
-            }
             } else {
                 storeInFile(savedtext);
             }
@@ -990,6 +1069,7 @@ public class ProjectGUI {
         }
 
     }
+
     /**
      * private class SAVE_ASButtonHandler for handling the event fired by load
      * buttton
@@ -1030,40 +1110,35 @@ public class ProjectGUI {
     private void storeInFile(String aName) {
         try (PrintWriter output = new PrintWriter(new File(aName))) {
             String newline = System.getProperty("line.separator");
-            
+
             output.println("THE RESULTS FOR YOUR SEARCH ARE:" + newline);
-            
+
             //for the text in leftResults:
             String linesLeft[] = leftResults.getText().split("\\r?\\n");
-            
-            for(String line : linesLeft){
-                if(!line.isEmpty())
-                    output.println(line + newline);
-            
-            }
-            output.println("THE STATISTICS RESULTS:"+ newline);
-            
-            
-           // output.println(rightUpResults.getText() + newline);
-            
-           //for the right down text
-           String linesRightDown[] = rightDownResults.getText().split("\\r?\\n");
-           for(String line : linesRightDown){
-                if(!line.isEmpty())
-                    output.println(line + newline);
-            
-            }
-          
-            
 
-            
+            for (String line : linesLeft) {
+                if (!line.isEmpty()) {
+                    output.println(line + newline);
+                }
+
+            }
+            output.println("THE STATISTICS RESULTS:" + newline);
+
+            // output.println(rightUpResults.getText() + newline);
+            //for the right down text
+            String linesRightDown[] = rightDownResults.getText().split("\\r?\\n");
+            for (String line : linesRightDown) {
+                if (!line.isEmpty()) {
+                    output.println(line + newline);
+                }
+
+            }
 
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(frame, ex.getMessage() + "EXXXX");
         }
     }
-    
-    
+
     /**
      * private class CLEARButtonHandler for handling the event fired by load
      * buttton
@@ -1072,7 +1147,7 @@ public class ProjectGUI {
 
         public void actionPerformed(ActionEvent e) {
             //CLEAR ALL RESULTS
-            
+
             leftResults.setText("");
             rightUpResults.setText("");
             rightDownResults.setText("");
@@ -1082,7 +1157,7 @@ public class ProjectGUI {
         }
 
     }
-    
+
     /**
      * private class TOKENSButtonHandler for handling the event fired by load
      * buttton
@@ -1098,6 +1173,7 @@ public class ProjectGUI {
         }
 
     }
+
     /**
      * private class POSTAGSButtonHandler for handling the event fired by load
      * buttton
@@ -1113,7 +1189,7 @@ public class ProjectGUI {
         }
 
     }
-    
+
     /**
      * private class POSTAGSButtonHandler for handling the event fired by load
      * buttton
