@@ -233,9 +233,64 @@ public String documentWideStats() {
         "Frequency of the POS tag of the keyword:\n" + formattedResult + "\n" +
         "Most likely to be preceeding Tag of the keyword (More than 1 character in length):" + "\n" + resulte
         + "\n" + "Most likely to be following Tag of this keyword (More than 1 character in length):" + "\n" + resulten;
+       
 
 
 }
+public String statisticsOfPOS(String po) {
+
+        ArrayList<String> he = new ArrayList<>();
+        ArrayList<String> j = new ArrayList<>();
+        HashMap<String, Integer> m = new HashMap<>();
+        String result = "";
+        String resul = "";
+        String frequency = getFrequencyOfTag ( po ) + "\n";
+        String formattedResult = frequency.format ( "%.02f", getFrequencyOfTag ( po ) ) + "%" + " " + "out of the total number of POS" + "\n";
+
+         he = tagCluster.get(po);
+         for (String e : he)
+         {
+           m.put(e, frequencyOfWord(e));
+
+         }
+        Object[] l = m.entrySet( ).toArray ( );
+        Arrays.sort ( l, ( Object o10, Object o11 ) -> ( ( Map.Entry <String, Integer> ) o11 ).getValue ( )
+                .compareTo ( ( ( Map.Entry <String, Integer> ) o10 ).getValue ( ) ) );
+        for ( Object e : l ) {
+
+            if (((( Map.Entry <String, Integer> ) e ).getValue ( )) == 1 && ((( Map.Entry <String, Integer> ) e ).getKey ( )).length () > 1 )
+                j.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+                        + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "time in the text" + "\n" ) ;
+
+            else if (((( Map.Entry <String, Integer> ) e ).getKey ( )).length () > 1) j.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
+                    + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" ) ;
+        }
+
+
+
+        List<String> rem = j.subList (0, 5);
+        for (String e: rem) resul += e;
+
+
+        return "Frequency of that POS Tag:" + " " + formattedResult + "\n" + "Most frequent Tokens with that Tag:" + "\n" + resul;
+
+       
+    }
+
+    public String statisticsForLemma(String lemma) {
+
+      String result = "";
+      ArrayList<String> he = new ArrayList <> ( );
+      he = lemmaTokens.get(lemma);
+
+      for (String el : he )
+
+          result += el + "\n";
+
+        return "Tokens having that lemma + their POS Tags:" + "\n"+ result + ;
+    }
+
+
 
 
 }      
