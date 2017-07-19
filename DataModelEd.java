@@ -333,6 +333,7 @@ public class DataModelEd {
                 val += tok + " ";
                 
             }
+            
             val+="\n\n";
             i++;    
         }
@@ -920,6 +921,11 @@ public class DataModelEd {
         ArrayList<String> hel = new ArrayList<>();
         ArrayList<String> tes = new ArrayList<>();
         ArrayList<String> tesi = new ArrayList<>();
+        List<String> res = new ArrayList<>();
+        List<String> re = new ArrayList<>();
+        List<String> rem = new ArrayList<>();
+        List<String> remo = new ArrayList<>();
+        
 
 
 
@@ -960,7 +966,12 @@ public class DataModelEd {
         prec.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
         + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" );
         }
-        List<String> res = prec.subList(0, 5);
+        
+        if (prec.size() > 4)
+        {res = prec.subList(0,5);}
+        
+        else res = prec;
+        
         for (String e: res) resu += e;
 
 
@@ -992,7 +1003,11 @@ public class DataModelEd {
         + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" ) ;
         }
 
-        List<String> re = next.subList(0, 5);
+         if (next.size() > 4)
+        {re = next.subList(0,5);}
+        
+        else re = next;
+        
         for (String e: re) resul += e;
 
 
@@ -1032,10 +1047,11 @@ public class DataModelEd {
         else if (((( Map.Entry <String, Integer> ) e ).getKey ( )).length () > 1) tes.add ( ( ( Map.Entry <String, Integer> ) e ).getKey ( ) +  ":" + " "
         + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" ) ;
         }
+              if (tes.size() > 4)
+        {rem = tes.subList(0,5);}
+        
+        else rem = tes;
 
-
-
-        List<String> rem = tes.subList (0, 5);
         for (String e: rem) resulte += e;
 
 
@@ -1078,7 +1094,12 @@ public class DataModelEd {
         + "appeared" + " " + ( ( Map.Entry <String, Integer> ) e ).getValue ( ) + " " + "times in the text" + "\n" ) ;
         }
 
-        List<String> remo = tesi.subList(0, 5);
+         if (tesi.size() > 4)
+        {remo = tesi.subList(0,5);}
+        
+        else remo = tesi;
+        
+     
         for (String e: remo) resulten += e;
 
 
