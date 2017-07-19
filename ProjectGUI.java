@@ -12,7 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,13 +64,15 @@ public class ProjectGUI {
 
     private final JFrame frame;
     private JTextField filename, keyword;
-    private JTextArea leftResults, rightResults;
-    private JComboBox<String> keywordList, numPrev, numAfter, inputText, posTags, tokens, lemmas;
+    private JTextArea leftResults, rightUpResults, rightDownResults;
+    private JComboBox<String> keywordList, inputText, posTags, tokens, lemmas;
+    private JComboBox<Integer> numPrev, numAfter;
     private DataModelEd project;
     private final JPanel levels;
     private JRadioButton activate, deactivate;
     private JButton tagged_SentButton, tokensButton, posButton, sentencesButton;
     private DefaultComboBoxModel<String> tagsModel, tokensModel, lemmasModel, keywordmodel;
+    private String savedtext = null;
 
     public ProjectGUI() {
         frame = new JFrame("Java Project");
@@ -124,12 +129,12 @@ public class ProjectGUI {
         fileMenu.add(Box.createVerticalStrut(10));
 
         m = new JMenuItem("Save");
-        // m.addActionListener(......);
+        m.addActionListener(new SAVEButtonHandler());
         fileMenu.add(m);
         fileMenu.add(Box.createVerticalStrut(10));
 
         m = new JMenuItem("Save as...");
-        // m.addActionListener(......);
+        m.addActionListener(new SAVE_AsButtonHandler());
         fileMenu.add(m);
 
         fileMenu.add(Box.createVerticalStrut(10));
@@ -137,7 +142,7 @@ public class ProjectGUI {
         fileMenu.add(Box.createVerticalStrut(10));
 
         m = new JMenuItem("Clear");
-        // m.addActionListener(......);
+        m.addActionListener(new CLEARButtonHandler());
         fileMenu.add(Box.createVerticalStrut(10));
         fileMenu.add(m);
         fileMenu.add(Box.createVerticalStrut(10));
@@ -282,7 +287,7 @@ public class ProjectGUI {
         keywordList.setPreferredSize(new Dimension(90, 20));
         keywordList.setMaximumSize(new Dimension(100, 20));
         keywordList.setEnabled(false);
-        keywordList.addActionListener(new SearchButtonHandler());
+        // keywordList.addActionListener();
 
         JPanel center1 = new JPanel();
         center1.add(centerLabel);
@@ -337,7 +342,7 @@ public class ProjectGUI {
 
         //two ComboBoxs
         //DefaultComboBoxModel prev = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
-        numPrev = new JComboBox(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}); //instance variable!!
+        numPrev = new JComboBox(new Integer[]{1,2,3,4,5,6,7,8,9,10}); //instance variable!!
         numPrev.setSelectedIndex(2);//default number
         numPrev.setToolTipText("Enter only digits");
         numPrev.setMinimumSize(new Dimension(50, 20));
@@ -345,10 +350,10 @@ public class ProjectGUI {
         numPrev.setMaximumSize(new Dimension(50, 20));
         numPrev.setEnabled(false);
         numPrev.setEditable(false);
+        //numPrev.addActionListener(new RadioButtonsListener());
 
-        //numPrev.addActionListener(.....);  <---
         // DefaultComboBoxModel after = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
-        numAfter = new JComboBox(new String[]{"1", "2", "3", "4", "5", "6", "7"}); //instance variable!!
+        numAfter = new JComboBox(new Integer[]{1,2,3,4,5,6,7,8,9,10}); //instance variable!!
         numAfter.setSelectedIndex(2);//default number
         numAfter.setToolTipText("Enter only digits");
         numAfter.setMinimumSize(new Dimension(50, 20));
@@ -356,7 +361,7 @@ public class ProjectGUI {
         numAfter.setMaximumSize(new Dimension(50, 20));
         numAfter.setEnabled(false);
         numAfter.setEditable(false);
-        //numAfter.addActionListener(.....); <---
+        //  numAfter.addActionListener());
 
         JPanel comboPanel = new JPanel();
         comboPanel.add(new JLabel("Preceding words:"));
@@ -384,7 +389,12 @@ public class ProjectGUI {
         // radioPanel.setBorder(border);
         ButtonGroup group = new ButtonGroup();
         activate = new JRadioButton("Activate");
+        activate.setEnabled(false);
+        activate.addActionListener(new RadioButtonsListener());
+
         deactivate = new JRadioButton("Deactivate");
+        deactivate.setEnabled(false);
+        deactivate.addActionListener(new RadioButtonsListener());
         radioPanel.add(activate);
         group.add(activate);
 
@@ -419,28 +429,39 @@ public class ProjectGUI {
     private void setupLevel5() {
 
         leftResults = new JTextArea("Search results", 10, 40);
-
         leftResults.setEditable(true); //the user can copy-paste his/her text and load it...
 
         //add this area into JScrollPane
         JScrollPane leftListPane = new JScrollPane(leftResults);
-        leftResults.setLineWrap(true);
+       
         leftResults.setEditable(true);
 
         //create the topPanel TextArea
-        rightResults = new JTextArea("Search results", 10, 20);
-
-        rightResults.setEditable(false);
+        rightUpResults = new JTextArea("Search results", 10, 20);
+        rightUpResults.setEditable(false);
         //add this area into JScrollPane
-        JScrollPane rightListPane = new JScrollPane(rightResults);
-        //add this ListPane into a Panel
+        JScrollPane rightUpListPane = new JScrollPane(rightUpResults);
+        
+        rightDownResults = new JTextArea("Search results", 10, 20);
+        rightDownResults.setEditable(false);
+        //add this area into JScrollPane
+        JScrollPane rightDownListPane = new JScrollPane(rightDownResults);
+        //add the right areas in the right area panel
+        JPanel rightArea = new JPanel();
+        rightArea.setLayout(new BoxLayout(rightArea, BoxLayout.Y_AXIS));
+        rightArea.add(rightUpListPane);
+        rightArea.add(Box.createVerticalStrut(5));
+        rightArea.add(rightDownListPane);
+        
+        
+        //add all areas in the main panel
         JPanel panel = new JPanel();
 
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(leftListPane);
         panel.add(Box.createRigidArea(new Dimension(5, 5)));
-        panel.add(rightListPane);
+        panel.add(rightArea);
 
         //add to JFrame
         frame.getContentPane().add(BorderLayout.CENTER, panel);
@@ -457,8 +478,8 @@ public class ProjectGUI {
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
         Border border1 = BorderFactory.createTitledBorder("Documents stats");
         labelPanel.setBorder(border1);
-        labelPanel.setPreferredSize(new Dimension(170, 150));
-        labelPanel.setMaximumSize(new Dimension(170, 150));
+        labelPanel.setPreferredSize(new Dimension(170, 130));
+        labelPanel.setMaximumSize(new Dimension(170, 130));
 
         tokensButton = new JButton("Tokens");
         tokensButton.setToolTipText("Search for the given keyword");
@@ -467,7 +488,7 @@ public class ProjectGUI {
         tokensButton.setMaximumSize(new Dimension(140, 20));
         tokensButton.setForeground(Color.BLUE);
         tokensButton.setEnabled(false);
-        //Tokens.addActionListener(......);
+        tokensButton.addActionListener(new TokenButtonHandler());
 
         posButton = new JButton("POS_Tags");
         posButton.setToolTipText("Search for the given keyword");
@@ -476,7 +497,7 @@ public class ProjectGUI {
         posButton.setMaximumSize(new Dimension(140, 20));
         posButton.setForeground(Color.BLUE);
         posButton.setEnabled(false);
-        //POS_Tags.addActionListener(......);
+        posButton.addActionListener(new POSTAGSButtonHandler());
 
         sentencesButton = new JButton("Sentences");
         sentencesButton.setToolTipText("Search for the given keyword");
@@ -494,7 +515,7 @@ public class ProjectGUI {
         tagged_SentButton.setMaximumSize(new Dimension(140, 20));
         tagged_SentButton.setForeground(Color.BLUE);
         tagged_SentButton.setEnabled(false);
-        //Tagged_Sent.addActionListener(......);
+        tagged_SentButton.addActionListener(new SENTandTAGSButtonHandler());
 
         //add the button into this panel
         labelPanel.add(Box.createVerticalStrut(10));
@@ -502,11 +523,11 @@ public class ProjectGUI {
         labelPanel.add(tokensButton);
         labelPanel.add(Box.createVerticalStrut(10));
         labelPanel.add(posButton);
-        labelPanel.add(Box.createVerticalStrut(10));
-        labelPanel.add(sentencesButton);
+       // labelPanel.add(Box.createVerticalStrut(10));
+       // labelPanel.add(sentencesButton);
         labelPanel.add(Box.createVerticalStrut(10));
         labelPanel.add(tagged_SentButton);
-        labelPanel.add(Box.createVerticalStrut(10));
+        labelPanel.add(Box.createVerticalStrut(15));
 
         JPanel labelPanalX = new JPanel();
         // labelPanalX.add(Box.createHorizontalStrut(10));
@@ -614,57 +635,74 @@ public class ProjectGUI {
                     String command = (String) inputText.getSelectedItem();
 
                     if (command.equals("Typed text")) {
+                        
                         project = new DataModelEd(leftResults.getText(), command);
                     } else {
                         project = new DataModelEd(filename.getText(), command);
                     }
+                    enableFunctions();//enable all functions we need....
 
-                    //when the load is succesful:
-                    // 1) default is the deactivate action of the radio button
-                    deactivate.setSelected(true);
-
-                    // 2) enable the keywordList area 
-                    keywordList.setEnabled(true);
-
-                    // 3)  fill the posTags combo box
-                    tagsModel.removeAllElements();//remove all elements from previous search
-                    for (String pos : project.getTagCluster().keySet()) {
-                        tagsModel.addElement(pos);
-                    }
-                    posTags.setEnabled(true);
-
-                    // 4) fill tokens combo box
-                    tokensModel.removeAllElements();
-                    for (String tok : project.getTokenTags().keySet()) {
-                        tokensModel.addElement(tok);
-                    }
-                    tokens.setEnabled(true);
-
-                    // 5) fill lemmas combo boox
-                    lemmasModel.removeAllElements();
-                    for (String lem : project.getLemmaSentences().keySet()) {
-                        lemmasModel.addElement(lem);
-                    }
-                    lemmas.setEnabled(true);
-
-                    // 6) enable the buttons of Ducument stats group
-                    tokensButton.setEnabled(true);
-                    posButton.setEnabled(true);
-                    sentencesButton.setEnabled(true);
-                    tagged_SentButton.setEnabled(true);
-
-                    // 7) initially tetx for keyword field
-                    keyword.setText("Enter a keyword");
-
+                    //show documents stats
+                    rightDownResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
+                    //leftResults.setFont(new Font("Monaco", Font.PLAIN, 12));
+                    rightDownResults.setMargin(new Insets(10, 10, 10, 10));
+                    rightDownResults.setCaretPosition(5);
+                    rightDownResults.setText(project.documentWideStats());
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(frame, "FileNotFoundException");
 
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(frame, "unvalid url");
+                    JOptionPane.showMessageDialog(frame, "Invalid url. Try again!");
                 }
             }
 
         }
+    }
+
+    private void enableFunctions() {
+        //when the load is succesful:
+        // 1) default is the deactivate action of the radio button
+        deactivate.setEnabled(true);
+        deactivate.setSelected(true);
+
+        activate.setEnabled(true);
+
+        // 2) enable the keywordList area 
+        keywordList.setEnabled(true);
+
+        // 3)  fill the posTags combo box
+        tagsModel.removeAllElements();//remove all elements from previous search
+        for (String pos : project.getTagCluster().keySet()) {
+            tagsModel.addElement(pos);
+        }
+        posTags.setEnabled(true);
+
+        // 4) fill tokens combo box
+        tokensModel.removeAllElements();
+        for (String tok : project.getTokenTags().keySet()) {
+            tokensModel.addElement(tok);
+        }
+        tokens.setEnabled(true);
+
+        // 5) fill lemmas combo boox
+        lemmasModel.removeAllElements();
+        /*for (String lem : project.getLemmaSentences().keySet()) {
+        lemmasModel.addElement(lem);
+        }*/
+        for(String lem : project.getSentencesWithLemma())
+            lemmasModel.addElement(lem);
+        lemmas.setEnabled(true);
+
+        // 6) enable the buttons of Ducument stats group
+        tokensButton.setEnabled(true);
+        posButton.setEnabled(true);
+        sentencesButton.setEnabled(true);
+        tagged_SentButton.setEnabled(true);
+
+        // 7) initially tetx for keyword field
+        keyword.setText("Enter a keyword");
+        
+      
     }
 
     /**
@@ -675,93 +713,118 @@ public class ProjectGUI {
 
         public void actionPerformed(ActionEvent e) {
 
-            leftResults.setFont(new Font(Font.DIALOG_INPUT, Font.HANGING_BASELINE, 15));
+            leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
             //leftResults.setFont(new Font("Monaco", Font.PLAIN, 12));
             leftResults.setMargin(new Insets(30, 40, 30, 40));
-
             leftResults.setCaretPosition(5);
-            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) keywordList.getModel();
+            
+            rightUpResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
+            //leftResults.setFont(new Font("Monaco", Font.PLAIN, 12));
+            rightUpResults.setMargin(new Insets(10, 10, 10, 10));
+            rightUpResults.setCaretPosition(5);
+
             String command = (String) keywordList.getSelectedItem();
 
-            if (keyword.getText() == null) {
-                JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
-            } else if (command.equals("Token")) {
-                if (!project.getTokenTags().keySet().contains(keyword.getText().trim())) {
-                    JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
-                } else {
-                    
-                    leftResults.setText(project.getSentencesOfToken(keyword.getText()));
-                    try {
-                        highlightKeyword3(leftResults, keyword.getText());
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+            if (activate.isSelected()) {
+                Integer numPrevious = (Integer)numPrev.getSelectedItem();
+                Integer numAfter = (Integer)numPrev.getSelectedItem();
+                if (keyword.getText() == null) {
+                    JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
+                } else if (command.equals("Token")) {
+                    String key = keyword.getText().toLowerCase();
+                    if (!project.getTokenTags().keySet().contains(keyword.getText().trim())) {
+                        JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
+                    } else {
+                        leftResults.setText(project.findTOKENAndItsNeighbours(key, numPrevious, numAfter));
+                        try {
+                            highlightKeyword3(leftResults, key);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                } else if (command.equals("Lemma")) {
+                    String lem = keyword.getText().trim().toLowerCase();// project.getLemma(keyword.getText().trim());
+                    if (!project.getLemmaSentences().keySet().contains(lem)) {
+                        JOptionPane.showMessageDialog(frame, "there is no such a lemma in this Document");
+                    } else {
+                        ArrayList<String> list = project.getTokensHavingThisLemma(lem);
+                        try {
+                            leftResults.setText(project.findLEMMAndItsNeighbours(lem, numPrevious, numAfter));
+                            highlightKeywordWithLIST(leftResults, list);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }catch (IOException ex) {
+                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                } else if (command.equals("POS")) {
+                    if (!project.getTagCluster().keySet().contains(keyword.getText().trim())) {
+                        JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
+                    } else {
+                        ArrayList<String> list = project.getTokensHavingThisPOSTag(keyword.getText());
+
+                        try {
+                            leftResults.setText(project.findPOSTagAndItsNeighbours(keyword.getText(), numPrevious, numAfter));
+                            highlightKeywordWithLIST(leftResults, list);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }catch (IOException ex) {
+                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
                     }
                 }
-            } else if (command.equals("Lemma")) {
-                String lem = project.getLemma(keyword.getText());
-                if (!project.getLemmaSentences().keySet().contains(lem)) {
-                    JOptionPane.showMessageDialog(frame, "there is no such a lemma in this Document");
-                } else {
-                    leftResults.setText(project.getSentencesOfLemma(lem));
-                    ArrayList<String> list = project.getTokensHavingThisLemma(lem);
 
-                    try {
-                        highlightKeywordWithList(leftResults, list);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+
+                if (keyword.getText() == null) {
+                    JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
+                } else if (command.equals("Token")) {
+                    String key = keyword.getText().toLowerCase();
+                    if (!project.getTokenTags().keySet().contains(keyword.getText().trim())) {
+                        JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
+                    } else {
+
+                        leftResults.setText(project.getSentWithThisToken_2(key));
+                        rightUpResults.setText(project.statisticsOfToken(key));
+                        try {
+                            highlightKeyword3(leftResults, key);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
+                } else if (command.equals("Lemma")) {
+                    String lem = keyword.getText().trim().toLowerCase();// project.getLemma(keyword.getText().trim());
+                    if (!project.getSentencesWithLemma().contains(lem)) {
+                        JOptionPane.showMessageDialog(frame, "there is no such a lemma in this Document");
+                    } else {
+                        leftResults.setText(project.getSentWithThisLemma_2(lem));
+                        ArrayList<String> list = project.getTokensHavingThisLemma(lem);
 
-                }
-            }else if (command.equals("POS")) {
-                if (!project.getTagCluster().keySet().contains(keyword.getText().trim())) {
-                    JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
-                } else {
-                    leftResults.setText(project.getSentencesOfPOSTag(keyword.getText()));
-                    ArrayList<String> list = project.getTokensHavingThisPOSTag(keyword.getText());
+                        try {
+                            highlightKeywordWithLIST(leftResults, list);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
 
-                    try {
-                        highlightKeywordWithList(leftResults, list);
-                    } catch (BadLocationException ex) {
-                        Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                } else if (command.equals("POS")) {
+                    if (!project.getTagCluster().keySet().contains(keyword.getText().trim())) {
+                        JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
+                    } else {
 
+                        leftResults.setText(project.getSentWithThisPOS_2(keyword.getText()));
+                        ArrayList<String> list = project.getTokensHavingThisPOSTag(keyword.getText());
+
+                        try {
+                            highlightKeywordWithLIST(leftResults, list);
+                        } catch (BadLocationException ex) {
+                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
                 }
-            }
-        }
-    }
-
-    /**
-     * helper method for highlight keywords
-     */
-    private void highlightKeyword(JTextArea area, String keyword) throws BadLocationException {
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
-
-        Pattern pattern = Pattern.compile("\\b" + keyword + "\\b");
-
-        Matcher matcher = pattern.matcher(keyword);
-
-        while (matcher.find()) {
-            int start = matcher.start();
-            int end = matcher.end();
-            highlighter.addHighlight(start, end, painter);
-        }
-
-    }
-
-    private void highlightKeywordWithList(JTextArea area, ArrayList<String> list) throws BadLocationException {
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
-
-        for (String pattern : list) {
-            String text = area.getText();
-            int index = text.indexOf(" " + pattern + " ");
-            while (index >= 0) {
-                highlighter.addHighlight(index+1, index + pattern.length()-1, painter);
-
-                index = text.indexOf(pattern, index + pattern.length());
             }
         }
     }
@@ -773,16 +836,44 @@ public class ProjectGUI {
 
         Document doc = area.getDocument();
         String p = " " + keyword + " ";
-        String text = doc.getText(0, doc.getLength());
+        String text = doc.getText(0, doc.getLength()).toLowerCase();
+
         String[] textarray = area.getText().split(" ");
         for (int i = 0; i < textarray.length; i++) {
             int pos = 0;
             // Search for pattern
             while ((pos = text.indexOf(p, pos)) >= 0) {
 
-                highlighter.addHighlight(pos, pos + p.length(),painter);
-                pos += keyword.length();
+                highlighter.addHighlight(pos + 1, pos + p.length() - 1, painter);
+                pos += p.length();
 
+            }
+        }
+
+    }
+
+    private void highlightKeywordWithLIST(JTextArea area, ArrayList<String> list) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
+
+        Document doc = area.getDocument();
+
+        String text = doc.getText(0, doc.getLength()).toLowerCase();
+
+        String[] textarray = area.getText().split(" ");
+        for (String pattern : list) {
+            pattern = pattern.toLowerCase();
+            String p = " " + pattern + " ";
+            for (int i = 0; i < textarray.length; i++) {
+                int pos = 0;
+                // Search for pattern
+                while ((pos = text.indexOf(p, pos)) >= 0) {
+
+                    highlighter.addHighlight(pos + 1, pos + p.length() - 1, painter);
+                    pos += p.length();
+
+                }
             }
         }
 
@@ -796,10 +887,30 @@ public class ProjectGUI {
 
         public void actionPerformed(ActionEvent e) {
             if (inputText.getSelectedItem().equals("Typed text")) {
+                leftResults.setLineWrap(true);
                 leftResults.setEditable(true);
             } else if (inputText.getSelectedItem().equals("Wikipedia") || inputText.getSelectedItem().equals("File")) {
                 leftResults.setEditable(false);
             }
+        }
+    }
+
+    /*
+         * ActionListener for the radio buttons
+     */
+    private class RadioButtonsListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if (e.getActionCommand().equals("Activate")) {
+                numPrev.setEnabled(true);
+                numAfter.setEnabled(true);
+            } else if (e.getActionCommand().equals("Deactivate")) {
+                numPrev.setEnabled(false);
+                numAfter.setEnabled(false);;
+            }
+
         }
     }
 
@@ -813,6 +924,7 @@ public class ProjectGUI {
             //or String command = String.valueOf(tokens.getSelectedItem());
             String command = (String) (tokens.getSelectedItem());
             keyword.setText(command);
+            keywordList.setSelectedItem("Token");
 
         }
     }
@@ -827,6 +939,7 @@ public class ProjectGUI {
             //or String command = String.valueOf(tokens.getSelectedItem());
             String command = (String) (lemmas.getSelectedItem());
             keyword.setText(command);
+            keywordList.setSelectedItem("Lemma");
 
         }
     }
@@ -841,8 +954,180 @@ public class ProjectGUI {
             //or String command = String.valueOf(tokens.getSelectedItem());
             String command = (String) (posTags.getSelectedItem());
             keyword.setText(command);
+            keywordList.setSelectedItem("POS");
 
         }
+    }
+    
+     /**
+     * private class LDButtonHandler for handling the event fired by load
+     * buttton
+     */
+    private class SAVEButtonHandler implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            
+            //prompt the user to enter a name for the file
+            if(savedtext == null) {
+                savedtext = JOptionPane.showInputDialog(frame, "Enter a file name which the elements are stored in");
+              if (new File(savedtext).exists()) { //if file already exists
+                //ask the user if he wants to overwrite it
+                if (JOptionPane.showConfirmDialog(frame, "A file with this name exists. Do you want to replace the old file?")
+                        == JOptionPane.YES_OPTION) {
+                    storeInFile(savedtext);
+
+                } else {
+                    savedtext = JOptionPane.showInputDialog(frame, "choose another name for the file");
+                    if (savedtext != null) {
+                        storeInFile(savedtext);
+                    }
+                }
+            }
+            } else {
+                storeInFile(savedtext);
+            }
+
+        }
+
+    }
+    /**
+     * private class SAVE_ASButtonHandler for handling the event fired by load
+     * buttton
+     */
+    private class SAVE_AsButtonHandler implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            //prompt the user to enter a name for the file
+            String fileName = JOptionPane.showInputDialog(frame, "Enter a file name which the elements are stored in");
+
+            if (fileName == null) { //if user clicks on cancel !!!
+                JOptionPane.showMessageDialog(frame, "you canceled the loading");
+            } else if (new File(fileName).exists()) { //if file already exists
+                //ask the user if he wants to overwrite it
+                if (JOptionPane.showConfirmDialog(frame, "A file with this name exists. Do you want to replace the old file?")
+                        == JOptionPane.YES_OPTION) {
+                    storeInFile(fileName);
+
+                } else {
+                    fileName = JOptionPane.showInputDialog(frame, "choose another name for the file");
+                    if (fileName != null) {
+                        storeInFile(fileName);
+                    }
+                }
+            } else {
+                storeInFile(fileName);
+            }
+
+        }
+
+    }
+
+    /**
+     * private method to print in the file
+     *
+     * @param aName
+     */
+    private void storeInFile(String aName) {
+        try (PrintWriter output = new PrintWriter(new File(aName))) {
+            String newline = System.getProperty("line.separator");
+            
+            output.println("THE RESULTS FOR YOUR SEARCH ARE:" + newline);
+            
+            //for the text in leftResults:
+            String linesLeft[] = leftResults.getText().split("\\r?\\n");
+            
+            for(String line : linesLeft){
+                if(!line.isEmpty())
+                    output.println(line + newline);
+            
+            }
+            output.println("THE STATISTICS RESULTS:"+ newline);
+            
+            
+           // output.println(rightUpResults.getText() + newline);
+            
+           //for the right down text
+           String linesRightDown[] = rightDownResults.getText().split("\\r?\\n");
+           for(String line : linesRightDown){
+                if(!line.isEmpty())
+                    output.println(line + newline);
+            
+            }
+          
+            
+
+            
+
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(frame, ex.getMessage() + "EXXXX");
+        }
+    }
+    
+    
+    /**
+     * private class CLEARButtonHandler for handling the event fired by load
+     * buttton
+     */
+    private class CLEARButtonHandler implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            //CLEAR ALL RESULTS
+            
+            leftResults.setText("");
+            rightUpResults.setText("");
+            rightDownResults.setText("");
+            keyword.setText("");
+            filename.setText("");
+
+        }
+
+    }
+    
+    /**
+     * private class TOKENSButtonHandler for handling the event fired by load
+     * buttton
+     */
+    private class TokenButtonHandler implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
+            leftResults.setMargin(new Insets(10, 10, 10, 10));
+            leftResults.setCaretPosition(2);
+            leftResults.setText(project.showInformationForAlltokens());
+
+        }
+
+    }
+    /**
+     * private class POSTAGSButtonHandler for handling the event fired by load
+     * buttton
+     */
+    private class POSTAGSButtonHandler implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
+            leftResults.setMargin(new Insets(10, 10, 10, 10));
+            leftResults.setCaretPosition(2);
+            leftResults.setText(project.showInformationForAllPOStags());
+
+        }
+
+    }
+    
+    /**
+     * private class POSTAGSButtonHandler for handling the event fired by load
+     * buttton
+     */
+    private class SENTandTAGSButtonHandler implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
+            leftResults.setMargin(new Insets(10, 10, 10, 10));
+            leftResults.setCaretPosition(2);
+            leftResults.setText(project.printTokensAndTagsPerSentece());
+
+        }
+
     }
 
     /**
