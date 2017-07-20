@@ -3,33 +3,34 @@
  */
 public class TagToEnglish {
 
+
     public static String tagUpdater(String tag){
         String result = "";
 
         switch (tag) {
 
             case "CC" :
-                result = "coordinating conjunction";
+                result = "Coordinating conjunction";
                 break;
 
             case "CD" :
-                result = "Cardinal number";
+                result = "Determiner";
                 break;
 
             case "DT" :
-                result = "noun";
+                result = "Noun";
                 break;
 
             case "EX" :
-                result = "existential there";
+                result = "Existential there";
                 break;
 
             case "FW" :
-                result = "foreign word";
+                result = "Foreign word";
                 break;
 
             case "IN" :
-                result = "preposition, subordinating conjunction";
+                result = "Preposition, subordinating conjunction";
                 break;
 
             case "N/that" :
@@ -37,87 +38,79 @@ public class TagToEnglish {
                 break;
 
             case "JJ" :
-                result = "adjective";
+                result = "Adjective";
                 break;
 
             case "JJR" :
-                result = "adjective, comparative";
+                result = "Adjective, comparative";
                 break;
 
             case "JJS" :
-                result = "adjective, superlative";
+                result = "Adjective, superlative";
                 break;
 
             case "LS" :
-                result = "list marker";
+                result = "List marker";
                 break;
 
             case "MD" :
-                result = "modal";
+                result = "Modal";
                 break;
 
             case "NN" :
-                result = "noun";
+                result = "Noun";
                 break;
 
             case "NNS" :
-                result = "noun plural";
+                result = "Noun plural";
                 break;
 
             case "NP" :
-                result = "proper noun, singular";
+                result = "Proper noun, singular";
                 break;
 
             case "NNP" : // penn treebank
-                result = "proper noun, singular";
+                result = "Proper noun, singular";
                 break;
 
             case "NPS" :
-                result = "proper noun, plural";
+                result = "Proper noun, plural";
                 break;
 
             case "NNPS" : // penn treebank
-                result = "proper noun, plural";
+                result = "Proper noun, plural";
                 break;
 
             case "PDT" :
-                result = "predeterminer";
+                result = "Predeterminer";
                 break;
 
             case "POS" :
-                result = "possessive ending";
-                break;
-
-            case "PP" :
-                result = "personal pronoun";
-                break;
-
-            case "PP$" :
-                result = "possessive pronoun";
+                result = "Possessive ending";
                 break;
 
             case "PRP" : // penn treebank
-                result = "personal pronoun";
+                result = "Personal pronoun";
                 break;
 
             case "PRP$" : // penn treebank
-                result = "possessive pronoun";
+                result = "Possessive pronoun";
                 break;
 
             case "RB" :
-                result = "adverb";
+                result = "Adverb";
                 break;
 
             case "RBR" :
-                result = "adverb, comparative";
+                result = "Adverb, comparative";
                 break;
 
             case "RBS" :
-                result = "adverb, superlative";
+                result = "Adverb, superlative";
                 break;
 
             case "RP" :
-                result = "particle";
+                result = "Particle";
                 break;
 
             case "SENT" :
@@ -129,99 +122,51 @@ public class TagToEnglish {
                 break;
 
             case "TO" :
-                result = "infinitive ‘to’";
+                result = "Infinitive ‘to’";
                 break;
 
             case "UH" :
-                result = "interjection";
+                result = "Interjection";
                 break;
 
             case "VB" :
-                result = "verb be, base form";
+                result = "Verb, base form";
                 break;
 
             case "VBD" :
-                result = "verb be, past tense";
+                result = "Verb, past tense";
                 break;
 
             case "VBG" :
-                result = "verb be, gerund/present participle";
+                result = "Verb, gerund/present participle";
                 break;
 
             case "VBN" :
-                result = "verb, past participle";
+                result = "Verb, past participle";
                 break;
 
             case "VBP" :
-                result = "verb be, sing. present, non-3d";
+                result = "Verb, sing. present, non-3rd person";
                 break;
 
             case "VBZ" :
-                result = "verb be, 3rd person sing. present";
-                break;
-
-            case "VH" :
-                result = "verb have, base form";
-                break;
-
-            case "VHD" :
-                result = "verb have, past tense";
-                break;
-
-            case "VHG" :
-                result = "verb have, gerund/present participle";
-                break;
-
-            case "VHN" :
-                result = "\tverb have, past participle";
-                break;
-
-            case "VHP" :
-                result = "verb have, sing. present, non-3d";
-                break;
-
-            case "VHZ" :
-                result = "verb have, 3rd person sing. present";
-                break;
-
-            case "VV" :
-                result = "verb, base form";
-                break;
-
-            case "VVD" :
-                result = "verb, past tense";
-                break;
-
-            case "VVG" :
-                result = "verb, gerund/present participle";
-                break;
-
-            case "VVN" :
-                result = "verb, past participle";
-                break;
-
-            case "VVP" :
-                result = "verb, sing. present, non-3d";
-                break;
-
-            case "VVZ" :
-                result = "verb, 3rd person sing. present";
+                result = "Verb, 3rd person sing. present";
                 break;
 
             case "WDT" :
-                result = "wh-determiner";
+                result = "Wh-determiner";
                 break;
 
             case "WP" :
-                result = "wh-pronoun";
+                result = "Wh-pronoun";
                 break;
 
             case "WP$" :
-                result = "possessive wh-pronoun";
+                result = "Possessive wh-pronoun";
                 break;
 
             case "WRB" :
-                result = "wh-abverb";
+                result = "Wh-abverb";
                 break;
 
             default :
@@ -232,7 +177,9 @@ public class TagToEnglish {
     }
     // DEMO
 //     public static void main(String[] args) {
+
 //         System.out.println(TagToEnglish.tagUpdater("NNS"));
 //         System.out.println(TagToEnglish.tagUpdater("VV"));
+
 //     }
 }
