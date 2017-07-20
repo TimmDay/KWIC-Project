@@ -153,15 +153,6 @@ public class DataModelEd {
                         list.add(sentences[j]);
                         tokenSentences.put(thisToken, list);
                     }
-                    /*if (tokenTags.containsKey(thisToken)) {
-                    if (!tokenTags.get(thisToken).contains(thisTag)) {
-                    tokenTags.get(thisToken).add(thisTag);
-                    }
-                    } else {
-                    ArrayList<String> list = new ArrayList<>();
-                    list.add(thisTag);
-                    tokenTags.put(thisToken, list);
-                    }*/
                     if (lemmaSentences.containsKey(lem)) {
                         if (!lemmaSentences.get(lem).contains(sentences[j])) {
                             lemmaSentences.get(lem).add(sentences[j]);
@@ -278,107 +269,60 @@ public class DataModelEd {
     public HashMap<Integer, String[]> getSentenceWithPOS(){
         return sentenceWithPOS;
     }
-    
-    public String getSentWithThisPOS_2(String pos){
-        if (pos == null) {
-            return null;
-        }
-       
-        ArrayList<String[]> rsl = new ArrayList<>();
-        for(Integer num : sentenceWithPOS.keySet()){
-            for(String s : sentenceWithPOS.get(num)){
-                if(pos.equalsIgnoreCase(s)){
-                    
-                    if(!rsl.contains(sentenceWithTokens.get(num)))
-                        rsl.add(sentenceWithTokens.get(num));
-                }
-               
-                    
-            }
-            
-        }
-        String val = "";
-        int i = 1;
-        for(String[] ar : rsl){
-            val += i + ". ";
-            for(String tok : ar){
-                val += tok + " ";     
-            }
-            val+="\n\n";
-            i++;    
-        }
-        return val;
+    public HashMap<Integer, String[]> getSentenceWithLemmas(){
+        return sentenceWithLemmas;
     }
     
+
    
-    public String getSentWithThisToken_2(String token){
+   
+    public String getSentWithThisToken(String token){
         if (token == null) {
             return null;
         }
         ArrayList<String[]> rsl = new ArrayList<>();
-        for(Integer num : sentenceWithTokens.keySet()){
-            for(String s : sentenceWithTokens.get(num)){
-                if(token.equalsIgnoreCase(s)){
-                    if(!rsl.contains(sentenceWithTokens.get(num)))
-                        rsl.add(sentenceWithTokens.get(num));
+        ArrayList<ArrayList<String>> info = new ArrayList<>();
+       // ArrayList<String> sublist = new ArrayList<>();
+        for(int j = 0; j < sentenceWithTokens.keySet().size(); j++){
+             ArrayList<String> sublist = new ArrayList<>();
+            for(int i = 0; i< sentenceWithTokens.get(j).length; i++){
+                if(token.equalsIgnoreCase(sentenceWithTokens.get(j)[i])){
+                    if(!rsl.contains(sentenceWithTokens.get(j)))
+                        rsl.add(sentenceWithTokens.get(j));
+                       // rsl.add(sentences[num]);
+               }
+                 //ArrayList<String> sublist = new ArrayList<>();
+                if(token.equalsIgnoreCase(sentenceWithTokens.get(j)[i])){
+                  
+                    sublist.add("(Token: " + sentenceWithTokens.get(j)[i] + "   Lemma : " + sentenceWithLemmas.get(j)[i] 
+                            + "   POSTag: " + sentenceWithPOS.get(j)[i] + ")");
+                     info.add(sublist);  
                 }
                     
             }
+          // info.add(sublist);
         }
         String val = "";
-        int i = 1;
-        for(String[] ar : rsl){
-            val += i + ". ";
-            for(String tok : ar){
-                val += tok + " ";
-                
+        int num = 1;
+        for(int j = 0; j < rsl.size(); j++){
+            val += num + ". ";
+            for(int i = 0; i < rsl.get(j).length; i++){
+                val += rsl.get(j)[i] + " ";              
             }
-            
-            val+="\n\n";
-            i++;    
-        }
-        return val;
-    }
-    
-    public String getSentWithThisLemma_2(String lemma){
-        if (lemma == null) {
-            return null;
-        }
-        ArrayList<String[]> rsl = new ArrayList<>();
-        for(Integer num : sentenceWithLemmas.keySet()){
-            for(String s : sentenceWithLemmas.get(num)){
-                if(lemma.equalsIgnoreCase(s)){
-                    if(!rsl.contains(sentenceWithTokens.get(num)))
-                        rsl.add(sentenceWithTokens.get(num));
+           // for(int i = 0; i < info.size(); i++){
+                for(int k = 0; k < info.get(j).size(); k++){
+                    val += "\n" + info.get(j).get(k) + " ";
                 }
-                    
-            }
+           // }
+            val += "\n\n";
+            num++;
         }
-        String val = "";
-        int i = 1;
-        for(String[] ar : rsl){
-            val += i + ". ";
-            for(String tok : ar){
-                val += tok + " ";
-                
-            }
-            val+="\n\n";
-            i++;    
-        } 
+        
         return val;
     }
-    
-    public ArrayList<String> getTokensHavingThisLemma(String lemma){
-        if (lemma == null) {
-            return null;
-        }
+   
+
  
-        if(!lemmaTokens.keySet().contains(lemma)) {
-            return null;
-        }
-        else
-            return lemmaTokens.get(lemma);
-    }
     public ArrayList<String> getTokensHavingThisPOSTag(String pos){
         if (pos == null) {
             return null;
@@ -486,7 +430,8 @@ public class DataModelEd {
         for (String key : tokenTags.keySet()) {
             String key2 = key.toLowerCase();
             val += i + ". \"" + key + "\": has " + tokenTags.get(key).size() 
-                    + " pos tag(s):   " + tokenTags.get(key) + "   and its frequency is:  " + tokenFreq.get(key2) + "\n\n";
+                    + " pos tag(s):   " + tokenTags.get(key) + "   and its frequency is:  " + tokenFreq.get(key2) + " or " +
+                    String.format("%.2f", getFrequencyOfToken(key2)) + "%\n\n";
             i++;
         }
         
@@ -536,8 +481,6 @@ public class DataModelEd {
      * getter method for finding the lemma from a given word
      * @param word the word searching the lemma for
      * @return the lemma of word
-     * @throws FileNotFoundException
-     * @throws IOException 
      */
     public String getLemma(String word) {
 
@@ -651,7 +594,7 @@ public class DataModelEd {
     }
 
     /**
-     * getter method
+     * needddddddddddddddd
      *
      * @param tag
      * @return the frequency as percentage of this tag in this text
@@ -672,6 +615,26 @@ public class DataModelEd {
             return -1;
         }
     }
+    /**
+     * needdddddddddddddd
+     * @param tok
+     * @return 
+     */
+     public double getFrequencyOfToken(String tok) { 
+        if (tok == null) {
+            return -1;
+        }
+        
+        if (tokenFreq.containsKey(tok)) {
+            double val;
+            val = ((double) tokenFreq.get(tok) * 100.0) / (double) numOfTokens;
+
+            //val =Double.valueOf(new DecimalFormat("").format(val));
+            return val;
+        } else {
+            return -1;
+        }
+    }
 
     public String findTOKENAndItsNeighbours(String aToken, int numPrev, int numAfter) {
         if (aToken == null) {
@@ -684,29 +647,35 @@ public class DataModelEd {
                 if (tokens[j].equalsIgnoreCase(aToken.trim())) {
                     if ((j - numPrev < 0) && (j + numAfter >= tokens.length)) {
                     String rsl = "";
-                    for (int t = 0; t <= tokens.length - 2; t++) {
+                    for (int t = 0; t <= tokens.length - 1; t++) {
                     rsl += tokens[t] + " ";
                     }
-                    rsl += tokens[tokens.length-1];
+                    rsl += "\n(Token: " + sentenceWithTokens.get(i)[j] + "   Lemma : " + sentenceWithLemmas.get(i)[j] 
+                            + "   POSTag: " + sentenceWithPOS.get(i)[j] + ")";
                     list.add(rsl);
                     } else if ((j + numAfter >= tokens.length) && (j - numPrev >= 0)) {
                     String rsl = "";
-                    for (int t = j- numPrev; t <= tokens.length - 2; t++) {
+                    for (int t = j- numPrev; t <= tokens.length - 1; t++) {
                     rsl += tokens[t] + " ";
                     }
-                    rsl += tokens[tokens.length-1];
+                    rsl += "\n(Token: " + sentenceWithTokens.get(i)[j] + "   Lemma : " + sentenceWithLemmas.get(i)[j] 
+                            + "   POSTag: " + sentenceWithPOS.get(i)[j] + ")";
                     list.add(rsl);
                     } else if ((j - numPrev < 0) && (j + numAfter < tokens.length)) {
                         String rsl = "";
                         for (int t = 0; t <= j + numAfter; t++) {
                             rsl += tokens[t] + " ";
                         }
+                        rsl += "\n(Token: " + sentenceWithTokens.get(i)[j] + "   Lemma : " + sentenceWithLemmas.get(i)[j] 
+                            + "   POSTag: " + sentenceWithPOS.get(i)[j] + ")";
                         list.add(rsl);
                     }else if ((j - numPrev >= 0) && (j + numAfter < tokens.length)) {
                     String rsl = "";
                     for (int t = j - numPrev; t <= j + numAfter; t++) {
                     rsl += tokens[t] + " ";
                     }
+                    rsl += "\n(Token: " + sentenceWithTokens.get(i)[j] + "   Lemma : " + sentenceWithLemmas.get(i)[j] 
+                            + "   POSTag: " + sentenceWithPOS.get(i)[j] + ")";
                     list.add(rsl);
                     }
 
@@ -835,34 +804,8 @@ public class DataModelEd {
         }
         return val;
     }
-    public void prinSentencesWithTokens(int x) {
-        
-            String[] tokens = sentenceWithTokens.get(x);
-            String rel = "";
-            for (int j = 0; j < tokens.length; j++) {
-                rel += tokens[j] + "- ";
-            }
-        System.out.println(rel);
 
-    }
-  /**
-   * helper method
-   * find the number of sentences having this tag
-   */
-    private ArrayList<Integer> getNumberOfSentWithThisToken(String aToken) {
-        if (aToken == null) {
-            return null;
-        }
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < sentenceWithTokens.keySet().size(); i++) {
-            for (String token : sentenceWithTokens.get(i)) {
-                if (token.equalsIgnoreCase(aToken)) {
-                    list.add(i); //automatic boxing...
-                }
-            }
-        }
-        return list;
-    }
+
     
     public String documentWideStats() {
 
@@ -1112,11 +1055,12 @@ public class DataModelEd {
 
 
 }
+     
 
     public static void main(String[] args) throws Exception {
         try {
            // DataModelEd my =  new DataModelEd("https://en.wikipedia.org/wiki/The_Beatles", "Wikipedia");
-          DataModelEd my =  new DataModelEd("ex.txt", "File");
+          DataModelEd my =  new DataModelEd("exx.txt", "File");
        //     System.out.println("Lemma search results: ");
       //      System.out.println("Sentences that lemma occurs:\n" + my.getSentencesOfLemma("account"));
         //    System.out.println("Tokens of that lemma in it:\n" + my.getTokensOfLemma("account"));
@@ -1125,8 +1069,9 @@ public class DataModelEd {
        //     System.out.println("Sentences that token occurs:\n" + my.getSentencesOfToken("account"));
          //   System.out.println("Tags of the token:\n" + my.getTagsOfToken("accounted"));
             //System.out.println("Tags of the token:\n"+ my.getSentencesOfLemma("account"));
-             System.out.println("tokens and their neighbours:\n"+ my.findPOSTagAndItsNeighbours("NN", 1,1));
-     my.prinSentencesWithTokens(2);
+            System.out.println(my.getNumOfAlllTags());
+        
+     
 
         } catch (IOException ex) {
             System.out.println("sdgdgadg");

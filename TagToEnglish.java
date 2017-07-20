@@ -13,7 +13,7 @@ public class TagToEnglish {
                 break;
 
             case "CD" :
-                result = "determiner";
+                result = "Cardinal number";
                 break;
 
             case "DT" :

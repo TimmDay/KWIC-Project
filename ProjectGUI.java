@@ -1,10 +1,7 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -17,13 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -49,7 +41,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 
@@ -80,8 +71,8 @@ public class ProjectGUI {
     public ProjectGUI() {
         frame = new JFrame("Java Project");
         frame.setSize(1000, 500);
-        frame.setMinimumSize(new Dimension(500, 400));
-        frame.setMaximumSize((new Dimension(1000, 900)));
+        frame.setMinimumSize(new Dimension(700, 400));
+        frame.setMaximumSize((new Dimension(1500, 900)));
 
         //main layout of the top level window
         frame.getContentPane().setLayout(new BorderLayout());
@@ -93,18 +84,7 @@ public class ProjectGUI {
         setupLeve1();
         setupLevel2();
 
-        /*JTabbedPane tabbedPane = new JTabbedPane();
-        
-        JPanel panel1 = new JPanel();
-        
-        panel1.setBackground(Color.red);
-        JPanel panel2 = new JPanel();
-        panel2.setBackground(Color.GREEN);
-        tabbedPane.addTab("Tab 1", panel1);
-        tabbedPane.addTab("Tab 2", panel2);
-        // frame.getContentPane().add(tabbedPane);*/
         setuplevel3();
-        //setupLevel4();
         frame.getContentPane().add(BorderLayout.NORTH, levels);
         //set up Center
         setupLevel5();
@@ -155,27 +135,6 @@ public class ProjectGUI {
         fileMenu.add(m);
         fileMenu.add(Box.createVerticalStrut(10));
 
-        /*        memoMenu.add(saveMenu);
-        
-        JMenu getMenu = new JMenu("Get");
-        
-        m = new JMenuItem("Get Memo 1");
-        m.addActionListener(this);
-        getMenu.add(m);
-        
-        m = new JMenuItem("Get Memo 2");
-        m.addActionListener(this);
-        getMenu.add(m);
-        
-        memoMenu.add(getMenu);
-        
-        m = new JMenuItem("Clear");
-        m.addActionListener(this);
-        memoMenu.add(m);
-        
-        m = new JMenuItem("Exit");
-        m.addActionListener(this);
-        memoMenu.add(m);*/
         JMenu historyMenu = new JMenu("History");
         historyMenu.add(Box.createVerticalStrut(10));
 
@@ -266,7 +225,7 @@ public class ProjectGUI {
         //filename.addActionListener(.....);
 
         JButton load = new JButton("load");
-        load.setToolTipText("load the input file or input URL");
+        load.setToolTipText("Load the input file or input URL");
         load.setMinimumSize(new Dimension(70, 20));
         load.setPreferredSize(new Dimension(90, 20));
         load.setMaximumSize(new Dimension(100, 20));
@@ -360,7 +319,7 @@ public class ProjectGUI {
         //DefaultComboBoxModel prev = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
         numPrev = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instance variable!!
         numPrev.setSelectedIndex(2);//default number
-        numPrev.setToolTipText("Enter only digits");
+        numPrev.setToolTipText("Choose the number of words precceding the keyword");
         numPrev.setMinimumSize(new Dimension(50, 20));
         numPrev.setPreferredSize(new Dimension(50, 20));
         numPrev.setMaximumSize(new Dimension(50, 20));
@@ -371,7 +330,7 @@ public class ProjectGUI {
         // DefaultComboBoxModel after = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
         numAfter = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instance variable!!
         numAfter.setSelectedIndex(2);//default number
-        numAfter.setToolTipText("Enter only digits");
+        numAfter.setToolTipText("Choose the number of words following the keyword");
         numAfter.setMinimumSize(new Dimension(50, 20));
         numAfter.setPreferredSize(new Dimension(50, 20));
         numAfter.setMaximumSize(new Dimension(50, 20));
@@ -401,8 +360,6 @@ public class ProjectGUI {
 
         //last right panel
         JPanel radioPanel = new JPanel(new GridLayout(0, 1));
-        //Border border = BorderFactory.createTitledBorder("Specify numbers");
-        // radioPanel.setBorder(border);
         ButtonGroup group = new ButtonGroup();
         activate = new JRadioButton("Activate");
         activate.setEnabled(false);
@@ -450,7 +407,7 @@ public class ProjectGUI {
         //add this area into JScrollPane
         JScrollPane leftListPane = new JScrollPane(leftResults);
 
-        leftResults.setEditable(true);
+        leftResults.setEditable(false);
 
         //create the topPanel TextArea
         rightUpResults = new JTextArea("Search results", 10, 20);
@@ -497,7 +454,7 @@ public class ProjectGUI {
         labelPanel.setMaximumSize(new Dimension(170, 130));
 
         tokensButton = new JButton("Tokens");
-        tokensButton.setToolTipText("Search for the given keyword");
+        tokensButton.setToolTipText("Shows all information for Tokens");
         tokensButton.setMinimumSize(new Dimension(90, 20));
         tokensButton.setPreferredSize(new Dimension(140, 20));
         tokensButton.setMaximumSize(new Dimension(140, 20));
@@ -506,7 +463,7 @@ public class ProjectGUI {
         tokensButton.addActionListener(new TokenButtonHandler());
 
         posButton = new JButton("POS_Tags");
-        posButton.setToolTipText("Search for the given keyword");
+        posButton.setToolTipText("Shows all information for POS ");
         posButton.setMinimumSize(new Dimension(90, 20));
         posButton.setPreferredSize(new Dimension(140, 20));
         posButton.setMaximumSize(new Dimension(140, 20));
@@ -514,14 +471,6 @@ public class ProjectGUI {
         posButton.setEnabled(false);
         posButton.addActionListener(new POSTAGSButtonHandler());
 
-        sentencesButton = new JButton("Sentences");
-        sentencesButton.setToolTipText("Search for the given keyword");
-        sentencesButton.setMinimumSize(new Dimension(90, 20));
-        sentencesButton.setPreferredSize(new Dimension(140, 20));
-        sentencesButton.setMaximumSize(new Dimension(140, 20));
-        sentencesButton.setForeground(Color.BLUE);
-        sentencesButton.setEnabled(false);
-        //Sentences.addActionListener(......);
 
         tagged_SentButton = new JButton("Sentence / Tags");
         tagged_SentButton.setToolTipText("Search for the given keyword");
@@ -538,8 +487,6 @@ public class ProjectGUI {
         labelPanel.add(tokensButton);
         labelPanel.add(Box.createVerticalStrut(10));
         labelPanel.add(posButton);
-        // labelPanel.add(Box.createVerticalStrut(10));
-        // labelPanel.add(sentencesButton);
         labelPanel.add(Box.createVerticalStrut(10));
         labelPanel.add(tagged_SentButton);
         labelPanel.add(Box.createVerticalStrut(15));
@@ -659,7 +606,6 @@ public class ProjectGUI {
 
                     //show documents stats
                     rightDownResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
-                    //leftResults.setFont(new Font("Monaco", Font.PLAIN, 12));
                     rightDownResults.setMargin(new Insets(10, 10, 10, 10));
                     rightDownResults.setCaretPosition(5);
                     rightDownResults.setText(project.documentWideStats());
@@ -701,9 +647,6 @@ public class ProjectGUI {
 
         // 5) fill lemmas combo boox
         lemmasModel.removeAllElements();
-        /*for (String lem : project.getLemmaSentences().keySet()) {
-        lemmasModel.addElement(lem);
-        }*/
         for (String lem : project.getSentencesWithLemma()) {
             lemmasModel.addElement(lem);
         }
@@ -712,7 +655,6 @@ public class ProjectGUI {
         // 6) enable the buttons of Ducument stats group
         tokensButton.setEnabled(true);
         posButton.setEnabled(true);
-        sentencesButton.setEnabled(true);
         tagged_SentButton.setEnabled(true);
 
         // 7) initially tetx for keyword field
@@ -729,52 +671,46 @@ public class ProjectGUI {
         public void actionPerformed(ActionEvent e) {
 
             leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
-            //leftResults.setFont(new Font("Monaco", Font.PLAIN, 12));
             leftResults.setMargin(new Insets(30, 40, 30, 40));
             leftResults.setCaretPosition(5);
 
             rightUpResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
-            //leftResults.setFont(new Font("Monaco", Font.PLAIN, 12));
             rightUpResults.setMargin(new Insets(10, 10, 10, 10));
             rightUpResults.setCaretPosition(5);
-
+            
+            //return the keyword category
             String command = (String) keywordList.getSelectedItem();
 
+            //get the model fro histList and fill it with the keywords that the user is searcing for 
             DefaultListModel<String> aListModel = (DefaultListModel<String>) histList.getModel();
-            aListModel.addElement(keyword.getText());
+            if(!aListModel.contains(keyword.getText()))//no duplicates in the list
+                aListModel.addElement(keyword.getText());
 
+            // if the activate radio button is selected:
             if (activate.isSelected()) {
-                Integer numPrevious = (Integer) numPrev.getSelectedItem();
-                Integer numAfter = (Integer) numPrev.getSelectedItem();
+                Integer numPrevious = (Integer) numPrev.getSelectedItem();//get the number from combo box
+                Integer numAf = (Integer) numAfter.getSelectedItem();//get the number from combo box
                 if (keyword.getText() == null) {
                     JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
                 } else if (command.equals("Token")) {
-
                     String key = keyword.getText().toLowerCase();
                     if (!project.getTokenTags().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
                     } else {
-                        leftResults.setText(project.findTOKENAndItsNeighbours(key, numPrevious, numAfter));
-                        rightUpResults.setText(project.statisticsOfToken(key));
                         try {
-                            highlightKeyword3(leftResults, key);
+                            highlightSearchByTOKENAndItsNeighbours(leftResults, keyword.getText().trim(), numPrevious, numAf);
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (command.equals("Lemma")) {
-
-                    String lem = keyword.getText().trim().toLowerCase();// project.getLemma(keyword.getText().trim());
+                    String lem = keyword.getText().trim();//
                     if (!project.getLemmaSentences().keySet().contains(lem)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a lemma in this Document");
                     } else {
-                        ArrayList<String> list = project.getTokensHavingThisLemma(lem);
-                        try {
-                            leftResults.setText(project.findLEMMAndItsNeighbours(lem, numPrevious, numAfter));
-                            highlightKeywordWithLIST(leftResults, list);
+                        try { 
+                            highlightSearchByLEMMAAndItsNeighbours(leftResults, lem, numPrevious, numAf);
                         } catch (BadLocationException ex) {
-                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
@@ -783,22 +719,15 @@ public class ProjectGUI {
                     if (!project.getTagCluster().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
                     } else {
-                        ArrayList<String> list = project.getTokensHavingThisPOSTag(keyword.getText());
-
                         try {
-                            leftResults.setText(project.findPOSTagAndItsNeighbours(keyword.getText(), numPrevious, numAfter));
-                            highlightKeywordWithLIST(leftResults, list);
+                           highlightSearchByPOSAndItsNeighbours(leftResults, keyword.getText().trim(), numPrevious, numAf);
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
-
                     }
                 }
 
             } else {
-
                 if (keyword.getText() == null) {
                     JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
                 } else if (command.equals("Token")) {
@@ -806,113 +735,107 @@ public class ProjectGUI {
                     if (!project.getTokenTags().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
                     } else {
-
-                        leftResults.setText(project.getSentWithThisToken(key)); /////
-                        rightUpResults.setText(project.statisticsOfToken(key));
                         try {
-                            highlightKeyword3(leftResults, key);
+                            highlightKeywordForToken(leftResults, key);
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (command.equals("Lemma")) {
-                    String lem = keyword.getText().trim().toLowerCase();// project.getLemma(keyword.getText().trim());
+                    String lem = keyword.getText().trim();//.toLowerCase();// project.getLemma(keyword.getText().trim());
                     if (!project.getSentencesWithLemma().contains(lem)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a lemma in this Document");
                     } else {
-                        leftResults.setText(project.getSentWithThisLemma_2(lem));
-                        ArrayList<String> list = project.getTokensHavingThisLemma(lem);
-
                         try {
-                            highlightKeywordWithLIST(leftResults, list);
+                            highlightKeywordForLemma(leftResults, lem);
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
-
                     }
                 } else if (command.equals("POS")) {
                     if (!project.getTagCluster().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
                     } else {
-
-                      //  leftResults.setText(project.getSentWithThisPOS_2(keyword.getText()));
-                      //  ArrayList<String> list = project.getTokensHavingThisPOSTag(keyword.getText());
-
                         try {
-                            highlightKeywordForPOSSSSSSS(leftResults,keyword.getText() );
-                           // highlightKeywordWithLIST(leftResults, list);
+                            highlightKeywordForSearchByPOS(leftResults,keyword.getText() );
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
-
                     }
                 }
             }
         }
     }
 
-    private void highlightKeyword3(JTextArea area, String keyword) throws BadLocationException {
+  
+
+  
+    private void highlightKeywordForToken(JTextArea area, String token) throws BadLocationException{
         Highlighter highlighter = area.getHighlighter();
         highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+        int num = 1;
 
-        Document doc = area.getDocument();
-        String p = " " + keyword + " ";
-        String text = doc.getText(0, doc.getLength()).toLowerCase();
+        for(int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++){
+           
+            for(int i = 0; i< project.getSentenceWithTokens().get(j).length; i++){
+                if(project.getSentenceWithTokens().get(j)[i].equalsIgnoreCase(token)){
+                    area.append(num + ". ");
+                    for(int k = 0; k<= i; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
+                    for(int k = i +1; k< project.getSentenceWithTokens().get(j).length; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+                    num++;
+                }
+                if(token.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])){
 
-        String[] textarray = area.getText().split(" ");
-        for (int i = 0; i < textarray.length; i++) {
-            int pos = 0;
-            // Search for pattern
-            while ((pos = text.indexOf(p, pos)) >= 0) {
-
-                highlighter.addHighlight(pos + 1, pos + p.length() - 1, painter);
-                pos += p.length();
-
-            }
-        }
-
-    }
-
-    private void highlightKeywordWithLIST(JTextArea area, ArrayList<String> list) throws BadLocationException {
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
-
-        Document doc = area.getDocument();
-
-        String text = doc.getText(0, doc.getLength()).toLowerCase();
-
-        String[] textarray = area.getText().split(" ");
-        for (String pattern : list) {
-            pattern = pattern.toLowerCase();
-            String p = " " + pattern + " ";
-            for (int i = 0; i < textarray.length; i++) {
-                int pos = 0;
-                // Search for pattern
-                while ((pos = text.indexOf(p, pos)) >= 0) {
-
-                    highlighter.addHighlight(pos + 1, pos + p.length() - 1, painter);
-                    pos += p.length();
-
+                    area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] + " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                 }
             }
         }
-
-    }
-    private void highlightKeywordForPOSSSSSSS(JTextArea area, String pos) throws BadLocationException {
+}
+    
+    private void highlightKeywordForLemma(JTextArea area, String lemma) throws BadLocationException{
         Highlighter highlighter = area.getHighlighter();
         highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
 
-        Document doc = area.getDocument();
-
-        String text = doc.getText(0, doc.getLength()).toLowerCase();
-        
-        area.setText("");
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
         int num = 1;
-        for(int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++){
-             ArrayList<String> sublist = new ArrayList<>();
+        for(int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++){
+            
+            for(int i = 0; i< project.getSentenceWithLemmas().get(j).length; i++){
+                if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
+                    area.append(num + ". ");
+                    for(int k = 0; k<= i; k++){
+                        area.append(project.getSentenceWithLemmas().get(j)[k] + " ");
+                    }
+                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithLemmas().get(j)[i].length()-1, area.getText().length() - 1, painter);
+                    for(int k = i +1; k< project.getSentenceWithLemmas().get(j).length; k++){
+                        area.append(project.getSentenceWithLemmas().get(j)[k] + " ");
+                    }
+                    num++;
+                }
+                if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
+                    area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                }
+            }
+        }
+}
+    private void highlightKeywordForSearchByPOS(JTextArea area, String pos) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+        int num = 1;
+        for(int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++){ 
             for(int i = 0; i< project.getSentenceWithPOS().get(j).length; i++){
                 if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
                     area.append(num + ". ");
@@ -920,44 +843,267 @@ public class ProjectGUI {
                         area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
                      highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
+                     
                       for(int k = i +1; k< project.getSentenceWithPOS().get(j).length; k++){
+                      
                         area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
                       area.append("\n");
-                       num++; 
+                       num++;       
                }
                  //ArrayList<String> sublist = new ArrayList<>();
                 if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
-                  
                     area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i] 
-                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] + ")\n");
-
+                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                    //+ TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i])
                 }
-               
-               //area.append("\n");
             }
-            
-          // info.add(sublist);
         }
-
-        /*String[] textarray = area.getText().split(" ");
-        for (String pattern : list) {
-        pattern = pattern.toLowerCase();
-        String p = " " + pattern + " ";
-        for (int i = 0; i < textarray.length; i++) {
-        int pos = 0;
-        // Search for pattern
-        while ((pos = text.indexOf(p, pos)) >= 0) {
-        
-        highlighter.addHighlight(pos + 1, pos + p.length() - 1, painter);
-        pos += p.length();
-        
-        }
-        }
-        }*/
-
     }
+    
 
+    private void highlightSearchByPOSAndItsNeighbours(JTextArea area, String pos, int numPrev, int numAfter) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+        int num = 1;
+        for (int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++) {
+            for (int i = 0; i < project.getSentenceWithPOS().get(j).length; i++) {
+                if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+                    //
+                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithPOS().get(j).length)) {
+                        area.append(num + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i + numAfter >= project.getSentenceWithPOS().get(j).length) && (i - numPrev >= 0)) {
+                        area.append(num + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithPOS().get(j).length)) {
+                        area.append(num + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithPOS().get(j).length)) {
+
+                        area.append(num + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } 
+                }
+            }
+        }
+    }
+    
+     private void highlightSearchByLEMMAAndItsNeighbours(JTextArea area, String lemma, int numPrev, int numAfter) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+        int num = 1;
+        for (int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++) {
+            for (int i = 0; i < project.getSentenceWithLemmas().get(j).length; i++) {
+                if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+                    //
+                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
+
+                        area.append(num + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i + numAfter >= project.getSentenceWithTokens().get(j).length) && (i - numPrev >= 0)) {
+                        area.append(num + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
+                        area.append(num + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
+
+                        area.append(num + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } 
+                }
+            }
+        }
+    }
+      private void highlightSearchByTOKENAndItsNeighbours(JTextArea area, String lemma, int numPrev, int numAfter) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n");
+        int num = 1;
+        for (int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++) {
+            for (int i = 0; i < project.getSentenceWithTokens().get(j).length; i++) {
+                if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
+                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
+
+                        area.append(num + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i + numAfter >= project.getSentenceWithTokens().get(j).length) && (i - numPrev >= 0)) {
+                        area.append(num + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
+                        area.append(num + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
+
+                        area.append(num + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+                        num++;
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    }
+                }
+            }
+        }
+    }
     /**
      * private class LDButtonHandler for handling the event fired by load
      * buttton
