@@ -113,9 +113,39 @@ public class DataModelEd {
             String[] tagsOfthisSent = tagger.tag(tokens);//... 2) the coresponding tags
             String[] lemmas = lemmatizer.lemmatize(tokens, tagsOfthisSent);//... and 3) the corresponding lemmas
             
-            for (int i = 0; i < lemmas.length; i++) { // <-- tim this is your update method. 
+            for (int i = 0; i < lemmas.length; i++) {
+                lemmas[i] = lemmas[i].toLowerCase();
+                tokens[i] = tokens[i].toLowerCase();
                 if (lemmas[i].equals("O")) {
                     lemmas[i] = tokens[i];
+                }
+                if (lemmas[i].length() > 1) {
+                    if (lemmas[i].charAt(0) == ('"')) {
+                        lemmas[i] = lemmas[i].substring(1);
+                    }
+                    if (lemmas[i].charAt(0) == ('\'')) {
+                        lemmas[i] = lemmas[i].substring(1);
+                    }
+                    if (lemmas[i].charAt(lemmas[i].length() - 1) == ('"')) {
+                        lemmas[i] = lemmas[i].substring(0, lemmas[i].length());
+                    }
+                    if (lemmas[i].charAt(lemmas[i].length() - 1) == ('\'')) {
+                        lemmas[i] = lemmas[i].substring(0, lemmas[i].length());
+                    }
+                }
+                if (tokens[i].length() > 1) {
+                    if (tokens[i].charAt(0) == ('"')) {
+                        tokens[i] = tokens[i].substring(1);
+                    }
+                    if (tokens[i].charAt(0) == ('\'')) {
+                        tokens[i] = tokens[i].substring(1);
+                    }
+                    if (tokens[i].charAt(tokens[i].length() - 1) == ('"')) {
+                        tokens[i] = tokens[i].substring(0, tokens[i].length());
+                    }
+                    if (tokens[i].charAt(tokens[i].length() - 1) == ('\'')) {
+                        tokens[i] = tokens[i].substring(0, tokens[i].length());
+                    }
                 }
             }
             sentenceWithTokens.put(j, tokens);
@@ -128,7 +158,7 @@ public class DataModelEd {
                 for (int i = 0; i < tokens.length; i++) {
                     String thisToken = tokens[i].trim();
                     String thisTag = tagsOfthisSent[i].trim();
-                    String lem = lemmas[i].trim();
+                    String lem = lemmas[i].trim().toLowerCase();
                     totalToken.add(thisToken);
 
                     if (tokenTags.containsKey(thisToken)) {
@@ -165,7 +195,7 @@ public class DataModelEd {
 
                     if (lemmaTags.containsKey(lem)) {
                         if (!lemmaTags.get(lem).contains(thisTag)) {
-                            lemmaTags.get(lem).add(thisTag);
+                            lemmaTags.get(lem).add(thisTag.toLowerCase());
                         }
                     } else {
                         ArrayList<String> list = new ArrayList<>();
@@ -245,6 +275,18 @@ public class DataModelEd {
             for(String lem : sentenceWithLemmas.get(num)){
                 if(!list.contains(lem))
                     list.add(lem);
+            }
+            
+        }
+        Collections.sort(list);
+        return list;
+    }
+     public ArrayList<String> getSentencesWithToken(){
+        ArrayList<String> list = new ArrayList<>();
+        for(Integer num : sentenceWithTokens.keySet()){
+            for(String tok : sentenceWithTokens.get(num)){
+                if(!list.contains(tok))
+                    list.add(tok);
             }
             
         }
@@ -616,7 +658,7 @@ public class DataModelEd {
         }
     }
     /**
-     * needdddddddddddddd
+     * neeeeeeeeeeeeeeeeddd
      * @param tok
      * @return 
      */
@@ -696,7 +738,7 @@ public class DataModelEd {
         if (lem == null) {
             return null;
         }
-        //String lem = getLemma(aWord);
+        //String tok = getLemma(aWord);
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < sentenceWithLemmas.keySet().size(); i++) {
             String[] tokens = sentenceWithTokens.get(i);

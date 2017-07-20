@@ -63,10 +63,11 @@ public class ProjectGUI {
     private DataModelEd project;
     private final JPanel levels;
     private JRadioButton activate, deactivate;
-    private JButton tagged_SentButton, tokensButton, posButton, sentencesButton;
+    private JButton tagged_SentButton, tokensButton, posButton;
     private DefaultComboBoxModel<String> tagsModel, tokensModel, lemmasModel, keywordmodel;
     private String savedtext = null;
     private JList<String> histList;
+    private int histNumber = 1;
 
     public ProjectGUI() {
         frame = new JFrame("Java Project");
@@ -124,11 +125,7 @@ public class ProjectGUI {
         fileMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
         fileMenu.add(Box.createVerticalStrut(10));
 
-        m = new JMenuItem("Clear");
-        m.addActionListener(new CLEARButtonHandler());
-        fileMenu.add(Box.createVerticalStrut(10));
-        fileMenu.add(m);
-        fileMenu.add(Box.createVerticalStrut(10));
+   
 
         m = new JMenuItem("Exit");
         m.addActionListener(x -> System.exit(0));
@@ -153,6 +150,7 @@ public class ProjectGUI {
         helpMenu.add(Box.createVerticalStrut(10));
 
         m = new JMenuItem("Info");
+        m.addActionListener(new InfoButtonHandler());
         helpMenu.add(m);
         helpMenu.add(Box.createVerticalStrut(10));
 
@@ -271,7 +269,7 @@ public class ProjectGUI {
         center1.add(Box.createHorizontalGlue());
         center1.setLayout(new BoxLayout(center1, BoxLayout.X_AXIS));
 
-        keyword = new JTextField("Enter a Keyword", 15); //instance variable!!
+        keyword = new JTextField("Search term here", 15); //instance variable!!
         keyword.setToolTipText("Enter the keyword and press search");
         keyword.setMinimumSize(new Dimension(70, 20));
         keyword.setPreferredSize(new Dimension(90, 20));
@@ -320,9 +318,9 @@ public class ProjectGUI {
         numPrev = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instance variable!!
         numPrev.setSelectedIndex(2);//default number
         numPrev.setToolTipText("Choose the number of words precceding the keyword");
-        numPrev.setMinimumSize(new Dimension(50, 20));
-        numPrev.setPreferredSize(new Dimension(50, 20));
-        numPrev.setMaximumSize(new Dimension(50, 20));
+        numPrev.setMinimumSize(new Dimension(60, 20));
+        numPrev.setPreferredSize(new Dimension(60, 20));
+        numPrev.setMaximumSize(new Dimension(60, 20));
         numPrev.setEnabled(false);
         numPrev.setEditable(false);
         //numPrev.addActionListener(new RadioButtonsListener());
@@ -331,9 +329,9 @@ public class ProjectGUI {
         numAfter = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instance variable!!
         numAfter.setSelectedIndex(2);//default number
         numAfter.setToolTipText("Choose the number of words following the keyword");
-        numAfter.setMinimumSize(new Dimension(50, 20));
-        numAfter.setPreferredSize(new Dimension(50, 20));
-        numAfter.setMaximumSize(new Dimension(50, 20));
+        numAfter.setMinimumSize(new Dimension(60, 20));
+        numAfter.setPreferredSize(new Dimension(60, 20));
+        numAfter.setMaximumSize(new Dimension(60, 20));
         numAfter.setEnabled(false);
         numAfter.setEditable(false);
         //  numAfter.addActionListener());
@@ -499,7 +497,7 @@ public class ProjectGUI {
         //second 
         JPanel comboPanel = new JPanel();
         comboPanel.setLayout(new BoxLayout(comboPanel, BoxLayout.Y_AXIS));
-        Border border = BorderFactory.createTitledBorder("Stats cluster");
+        Border border = BorderFactory.createTitledBorder("Available Search Terms");
         comboPanel.setBorder(border);
 
         comboPanel.setPreferredSize(new Dimension(170, 150));
@@ -571,9 +569,9 @@ public class ProjectGUI {
         //Top panel that holds labelPanelX and comboPanel
         JPanel topPanel = new JPanel();
         topPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        topPanel.add(labelPanalX);
-        topPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         topPanel.add(comboPanel);
+        topPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        topPanel.add(labelPanalX);
         topPanel.add(Box.createVerticalGlue());
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));//end topPanel
 
@@ -608,12 +606,12 @@ public class ProjectGUI {
                     rightDownResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
                     rightDownResults.setMargin(new Insets(10, 10, 10, 10));
                     rightDownResults.setCaretPosition(5);
-                    rightDownResults.setText(project.documentWideStats());
+                    //rightDownResults.setText(project.documentWideStats());
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(frame, "FileNotFoundException");
+                    JOptionPane.showMessageDialog(frame, "Please check your input");
 
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(frame, "Invalid url. Try again!");
+                    JOptionPane.showMessageDialog(frame, "Please check your input");
                 }
             }
 
@@ -640,7 +638,7 @@ public class ProjectGUI {
 
         // 4) fill tokens combo box
         tokensModel.removeAllElements();
-        for (String tok : project.getTokenTags().keySet()) {
+        for (String tok : project.getSentencesWithToken()) {
             tokensModel.addElement(tok);
         }
         tokens.setEnabled(true);
@@ -659,6 +657,8 @@ public class ProjectGUI {
 
         // 7) initially tetx for keyword field
         keyword.setText("Enter a keyword");
+        
+        rightDownResults.setText(project.documentWideStats());
 
     }
 
@@ -678,13 +678,19 @@ public class ProjectGUI {
             rightUpResults.setMargin(new Insets(10, 10, 10, 10));
             rightUpResults.setCaretPosition(5);
             
+            rightDownResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
+            rightDownResults.setMargin(new Insets(10, 10, 10, 10));
+            rightDownResults.setCaretPosition(5);
+            rightDownResults.setText(project.documentWideStats());//remains constant
+            
             //return the keyword category
             String command = (String) keywordList.getSelectedItem();
 
             //get the model fro histList and fill it with the keywords that the user is searcing for 
             DefaultListModel<String> aListModel = (DefaultListModel<String>) histList.getModel();
             if(!aListModel.contains(keyword.getText()))//no duplicates in the list
-                aListModel.addElement(keyword.getText());
+                aListModel.addElement(histNumber + ". " +keyword.getText());
+            histNumber++;
 
             // if the activate radio button is selected:
             if (activate.isSelected()) {
@@ -694,20 +700,24 @@ public class ProjectGUI {
                     JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
                 } else if (command.equals("Token")) {
                     String key = keyword.getText().toLowerCase();
-                    if (!project.getTokenTags().keySet().contains(keyword.getText().trim())) {
+                    if (!project.getTokenTags().keySet().contains(key)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
                     } else {
+                        rightUpResults.setText(project.statisticsOfToken(key));
                         try {
-                            highlightSearchByTOKENAndItsNeighbours(leftResults, keyword.getText().trim(), numPrevious, numAf);
+                            highlightSearchByTOKENAndItsNeighbours(leftResults, key, numPrevious, numAf);
                         } catch (BadLocationException ex) {
                             Logger.getLogger(ProjectGUI.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else if (command.equals("Lemma")) {
-                    String lem = keyword.getText().trim();//
+                    String lem = keyword.getText().trim().toLowerCase();//
+                    lem = project.getLemma(lem);
+                    //lem = project.getLemma(lem);
                     if (!project.getLemmaSentences().keySet().contains(lem)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a lemma in this Document");
                     } else {
+                        rightUpResults.setText(project.statisticsOfLemma(lem));
                         try { 
                             highlightSearchByLEMMAAndItsNeighbours(leftResults, lem, numPrevious, numAf);
                         } catch (BadLocationException ex) {
@@ -719,6 +729,7 @@ public class ProjectGUI {
                     if (!project.getTagCluster().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
                     } else {
+                        rightUpResults.setText(project.statisticsOfPOS(keyword.getText().trim()));
                         try {
                            highlightSearchByPOSAndItsNeighbours(leftResults, keyword.getText().trim(), numPrevious, numAf);
                         } catch (BadLocationException ex) {
@@ -732,9 +743,10 @@ public class ProjectGUI {
                     JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
                 } else if (command.equals("Token")) {
                     String key = keyword.getText().toLowerCase();
-                    if (!project.getTokenTags().keySet().contains(keyword.getText().trim())) {
+                    if (!project.getTokenTags().keySet().contains(key)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
                     } else {
+                        rightUpResults.setText(project.statisticsOfToken(key));
                         try {
                             highlightKeywordForToken(leftResults, key);
                         } catch (BadLocationException ex) {
@@ -742,10 +754,13 @@ public class ProjectGUI {
                         }
                     }
                 } else if (command.equals("Lemma")) {
-                    String lem = keyword.getText().trim();//.toLowerCase();// project.getLemma(keyword.getText().trim());
+                    
+                    String lem = keyword.getText().trim().toLowerCase();// project.getLemma(keyword.getText().trim());
+                    lem = project.getLemma(lem);
                     if (!project.getSentencesWithLemma().contains(lem)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a lemma in this Document");
                     } else {
+                        rightUpResults.setText(project.statisticsOfLemma(lem));
                         try {
                             highlightKeywordForLemma(leftResults, lem);
                         } catch (BadLocationException ex) {
@@ -756,6 +771,7 @@ public class ProjectGUI {
                     if (!project.getTagCluster().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
                     } else {
+                        rightUpResults.setText(project.statisticsOfPOS(keyword.getText().trim()));
                         try {
                             highlightKeywordForSearchByPOS(leftResults,keyword.getText() );
                         } catch (BadLocationException ex) {
@@ -775,13 +791,13 @@ public class ProjectGUI {
         highlighter.removeAllHighlights();//remove all previous
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-        int num = 1;
+        
 
         for(int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++){
            
             for(int i = 0; i< project.getSentenceWithTokens().get(j).length; i++){
                 if(project.getSentenceWithTokens().get(j)[i].equalsIgnoreCase(token)){
-                    area.append(num + ". ");
+                    area.append(j + ". ");
                     for(int k = 0; k<= i; k++){
                         area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
@@ -789,7 +805,7 @@ public class ProjectGUI {
                     for(int k = i +1; k< project.getSentenceWithTokens().get(j).length; k++){
                         area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
-                    num++;
+                    
                 }
                 if(token.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])){
 
@@ -806,20 +822,20 @@ public class ProjectGUI {
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
 
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-        int num = 1;
+        
         for(int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++){
             
             for(int i = 0; i< project.getSentenceWithLemmas().get(j).length; i++){
                 if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
-                    area.append(num + ". ");
+                    area.append(j + ". ");
                     for(int k = 0; k<= i; k++){
-                        area.append(project.getSentenceWithLemmas().get(j)[k] + " ");
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
-                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithLemmas().get(j)[i].length()-1, area.getText().length() - 1, painter);
+                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
                     for(int k = i +1; k< project.getSentenceWithLemmas().get(j).length; k++){
-                        area.append(project.getSentenceWithLemmas().get(j)[k] + " ");
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
-                    num++;
+                    
                 }
                 if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
                     area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
@@ -834,11 +850,11 @@ public class ProjectGUI {
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
 
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-        int num = 1;
+        
         for(int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++){ 
             for(int i = 0; i< project.getSentenceWithPOS().get(j).length; i++){
                 if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
-                    area.append(num + ". ");
+                    area.append(j + ". ");
                     for(int k = 0; k<= i; k++){
                         area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
@@ -849,7 +865,7 @@ public class ProjectGUI {
                         area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
                       area.append("\n");
-                       num++;       
+                            
                }
                  //ArrayList<String> sublist = new ArrayList<>();
                 if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
@@ -868,13 +884,13 @@ public class ProjectGUI {
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
 
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-        int num = 1;
+       
         for (int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++) {
             for (int i = 0; i < project.getSentenceWithPOS().get(j).length; i++) {
                 if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
                     //
                     if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithPOS().get(j).length)) {
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = 0; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -883,14 +899,14 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
                     } else if ((i + numAfter >= project.getSentenceWithPOS().get(j).length) && (i - numPrev >= 0)) {
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = i - numPrev; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -899,14 +915,14 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                       
                         if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
                     } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithPOS().get(j).length)) {
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = 0; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -915,7 +931,7 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
@@ -923,7 +939,7 @@ public class ProjectGUI {
                         }
                     } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithPOS().get(j).length)) {
 
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = i - numPrev; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -932,7 +948,7 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
@@ -950,14 +966,14 @@ public class ProjectGUI {
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
 
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-        int num = 1;
+       
         for (int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++) {
             for (int i = 0; i < project.getSentenceWithLemmas().get(j).length; i++) {
                 if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
                     //
                     if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
 
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = 0; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -966,14 +982,14 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
                     } else if ((i + numAfter >= project.getSentenceWithTokens().get(j).length) && (i - numPrev >= 0)) {
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = i - numPrev; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -982,14 +998,14 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
                     } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = 0; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -998,7 +1014,7 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
@@ -1006,7 +1022,7 @@ public class ProjectGUI {
                         }
                     } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
 
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = i - numPrev; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -1015,7 +1031,7 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
@@ -1032,13 +1048,13 @@ public class ProjectGUI {
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
 
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n");
-        int num = 1;
+        
         for (int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++) {
             for (int i = 0; i < project.getSentenceWithTokens().get(j).length; i++) {
                 if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
                     if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
 
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = 0; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -1047,13 +1063,13 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
                     } else if ((i + numAfter >= project.getSentenceWithTokens().get(j).length) && (i - numPrev >= 0)) {
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = i - numPrev; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -1062,13 +1078,13 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                       
                         if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
                     } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
-                        area.append(num + ". ");
+                        area.append(j+ ". ");
                         for (int k = 0; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -1077,14 +1093,14 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
                     } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
 
-                        area.append(num + ". ");
+                        area.append(j + ". ");
                         for (int k = i - numPrev; k <= i; k++) {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
@@ -1093,7 +1109,7 @@ public class ProjectGUI {
                             area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                         }
                         area.append("\n");
-                        num++;
+                        
                         if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
@@ -1114,6 +1130,7 @@ public class ProjectGUI {
             if (inputText.getSelectedItem().equals("Typed text")) {
                 leftResults.setLineWrap(true);
                 leftResults.setEditable(true);
+                filename.setEnabled(false);
             } else if (inputText.getSelectedItem().equals("Wikipedia") || inputText.getSelectedItem().equals("File")) {
                 leftResults.setEditable(false);
             }
@@ -1133,7 +1150,7 @@ public class ProjectGUI {
                 numAfter.setEnabled(true);
             } else if (e.getActionCommand().equals("Deactivate")) {
                 numPrev.setEnabled(false);
-                numAfter.setEnabled(false);;
+                numAfter.setEnabled(false);
             }
 
         }
@@ -1279,30 +1296,21 @@ public class ProjectGUI {
                 }
 
             }
+            
+            String linesRightUp[] = rightUpResults.getText().split("\\r?\\n");
+            for (String line : linesRightUp) {
+                if (!line.isEmpty()) {
+                    output.println(line + newline);
+                }
+
+            }
 
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(frame, ex.getMessage() + "EXXXX");
         }
     }
 
-    /**
-     * private class CLEARButtonHandler for handling the event fired by load
-     * buttton
-     */
-    private class CLEARButtonHandler implements ActionListener {
 
-        public void actionPerformed(ActionEvent e) {
-            //CLEAR ALL RESULTS
-
-            leftResults.setText("");
-            rightUpResults.setText("");
-            rightDownResults.setText("");
-            keyword.setText("");
-            filename.setText("");
-
-        }
-
-    }
 
     /**
      * private class TOKENSButtonHandler for handling the event fired by load
@@ -1347,6 +1355,36 @@ public class ProjectGUI {
             leftResults.setMargin(new Insets(10, 10, 10, 10));
             leftResults.setCaretPosition(2);
             leftResults.setText(project.printTokensAndTagsPerSentece());
+
+        }
+
+    }
+    
+    /**
+     * private class POSTAGSButtonHandler for handling the event fired by load
+     * buttton
+     */
+    private class InfoButtonHandler implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+          JFrame infoframe = new JFrame("KWIC Program manual");
+          infoframe.setSize(300, 500);
+          infoframe.setMinimumSize(new Dimension(300, 400));
+          infoframe.setMaximumSize((new Dimension(300, 700)));
+          
+          
+          JTextArea infotxt = new JTextArea(10,10);
+          infotxt.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
+          infotxt.setMargin(new Insets(10, 10, 10, 10));
+          infotxt.setBackground(Color.CYAN);
+          infotxt.setText("dgljdlgldjglglglgmlfml\n\njgrjgrjgrjglrtglrg \n\n");
+          JScrollPane infoPane = new JScrollPane(infotxt);
+          
+          
+          infoframe.getContentPane().add(infoPane);
+          
+          infoframe.addWindowListener(new MyWindowListener());
+          infoframe.setVisible(true);
 
         }
 

@@ -14,11 +14,11 @@ public class TagToEnglish {
                 break;
 
             case "CD" :
-                result = "Determiner";
+                result = "Cardinal number";
                 break;
 
             case "DT" :
-                result = "Noun";
+                result = "Determiner";
                 break;
 
             case "EX" :
