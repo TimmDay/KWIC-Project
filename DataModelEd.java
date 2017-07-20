@@ -472,8 +472,8 @@ public class DataModelEd {
         for (String key : tokenTags.keySet()) {
             String key2 = key.toLowerCase();
             val += i + ". \"" + key + "\": has " + tokenTags.get(key).size() 
-                    + " pos tag(s):   " + tokenTags.get(key) + "   and its frequency is:  " + tokenFreq.get(key2) + " or " +
-                    String.format("%.2f", getFrequencyOfToken(key2)) + "%\n\n";
+                   + " POS tag(s) and its frequency is:  " + tokenFreq.get(key2) + " or " +
+                    String.format("%.2f", getFrequencyOfToken(key2)) + "% -> " +  tokenTags.get(key) +"\n\n";
             i++;
         }
         
@@ -484,9 +484,9 @@ public class DataModelEd {
         int i = 1;
         for (String key : tagCluster.keySet()) {
             val += i + ". \"" + key + "\": matches " + tagCluster.get(key).size() 
-                    + " token(s):   " + tagCluster.get(key) + "   and its frequency is:  " + tagFreq.get(key) 
-                    + "  or " + String.format( "%.2f", getFrequencyOfTag(key) ) + "%\n\n";
-            i++;//String.format( "%.2f", dub )
+                     + " token(s) and its frequency is:  " + tagFreq.get(key) 
+                    + "  or " + String.format( "%.2f", getFrequencyOfTag(key) ) + "%  -> " + tagCluster.get(key) +  "\n\n";
+            i++;//String.format( "%.2f", dub ) 
         }
         
         return val;
