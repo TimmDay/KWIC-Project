@@ -1,0 +1,12 @@
+if (lemmas[i].charAt(0) == ('"')){
+    lemmas[i] =lemmas[i].substring(1);
+}
+if (lemmas[i].charAt(0) == ('\'')){
+    lemmas[i] =lemmas[i].substring(1);
+}
+if (lemmas[i].charAt(lemmas[i].length()-1) == ('"')){
+    lemmas[i] =lemmas[i].substring(0,lemmas[i].length());
+}
+if (lemmas[i].charAt(lemmas[i].length()-1) == ('\'')){
+    lemmas[i] =lemmas[i].substring(0,lemmas[i].length());
+}
