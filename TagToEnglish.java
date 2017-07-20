@@ -3,7 +3,6 @@
  */
 public class TagToEnglish {
 
-
     public static String tagUpdater(String tag){
         String result = "";
 
@@ -69,7 +68,15 @@ public class TagToEnglish {
                 result = "proper noun, singular";
                 break;
 
+            case "NNP" : // penn treebank
+                result = "proper noun, singular";
+                break;
+
             case "NPS" :
+                result = "proper noun, plural";
+                break;
+
+            case "NNPS" : // penn treebank
                 result = "proper noun, plural";
                 break;
 
@@ -86,6 +93,14 @@ public class TagToEnglish {
                 break;
 
             case "PP$" :
+                result = "possessive pronoun";
+                break;
+
+            case "PRP" : // penn treebank
+                result = "personal pronoun";
+                break;
+
+            case "PRP$" : // penn treebank
                 result = "possessive pronoun";
                 break;
 
@@ -134,7 +149,7 @@ public class TagToEnglish {
                 break;
 
             case "VBN" :
-                result = "verb be, past participle";
+                result = "verb, past participle";
                 break;
 
             case "VBP" :
@@ -215,12 +230,9 @@ public class TagToEnglish {
         }
         return result;
     }
-
     // DEMO
-    public static void main(String[] args) {
-
-        System.out.println(TagToEnglish.tagUpdater("NNS"));
-        System.out.println(TagToEnglish.tagUpdater("VV"));
-        
-    }
+//     public static void main(String[] args) {
+//         System.out.println(TagToEnglish.tagUpdater("NNS"));
+//         System.out.println(TagToEnglish.tagUpdater("VV"));
+//     }
 }
