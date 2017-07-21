@@ -1,10 +1,4 @@
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.mycompany.projectjava2;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -34,27 +28,27 @@ import javax.swing.text.Highlighter.HighlightPainter;
 
 
 /**
- *
- * @author Savvas and Stella
+ * GUI Class.  
+ * @author Savvas Chatzipanagiotidis, Stella Lee
  */
 public class GUI {
 
-    private final JFrame frame;
-    private JTextField filename, keyword;
-    private JTextArea leftResults, rightUpResults, rightDownResults;
-    private JComboBox<String> keywordList, inputText, posTags, tokens, lemmas;
-    private JComboBox<Integer> numPrev, numAfter;
-    private DataStoreAndSearch project;
-    private final JPanel levels;
-    private JRadioButton activate, deactivate;
-    private JButton tagged_SentButton, tokensButton, posButton;
-    private DefaultComboBoxModel<String> tagsModel, tokensModel, lemmasModel, keywordmodel;
-    private String savedtext = null;
-    private JList<String> histList;
-    private int histNumber = 1;
+    private final JFrame frame; // the top level window
+    private JTextField filename, keyword; //field for entering the source and the key word
+    private JTextArea leftResults, rightUpResults, rightDownResults; //the text areas to display the results
+    private JComboBox<String> keywordList, inputText, posTags, tokens, lemmas;//all String combo boxes variables
+    private JComboBox<Integer> numPrev, numAfter;//Integer combo boxes
+    private DataStoreAndSearch project; //the obejct of the class that we use for generating the results
+    private final JPanel levels;// one top panel 
+    private JRadioButton activate, deactivate;// radio buttons for actovate or deactivate the search with neighbors
+    private JButton tagged_SentButton, tokensButton, posButton;// Buttons for displaying some results
+    private DefaultComboBoxModel<String> tagsModel, tokensModel, lemmasModel, keywordmodel;//models for combo boxes
+    private String savedtext = null;//the variable that we use when the user SAVE for the first time the results 
+    private JList<String> histList;//The list for displaying the kexwords that the user has been searching for
+    private int histNumber = 1;// the integer for count the keywords in the history list. it icrements by one each time the user click on the search
 
-    // CONSTRUCTOR
     public GUI() {
+        //create the top level window and its properties
         frame = new JFrame("Java Project");
         frame.setSize(1000, 500);
         frame.setMinimumSize(new Dimension(700, 400));
@@ -69,54 +63,56 @@ public class GUI {
         //setup Norh
         setupLeve1();
         setupLevel2();
-
         setuplevel3();
-        frame.getContentPane().add(BorderLayout.NORTH, levels);
+        frame.getContentPane().add(BorderLayout.NORTH, levels);//put the levels panel that holdes all subpanels in the  the North of the top level window
         //set up Center
         setupLevel5();
 
         //set up East
         setUpEast();
 
-        frame.addWindowListener(new MyWindowListener());
+        frame.addWindowListener(new MyWindowListener());//add window listener 
 
         frame.setVisible(true);
     }
 
+    /**
+     *private method setupLevel1
+     * create all components for this level
+     */
     private void setupLeve1() {
+        //create the first menu and its menu items 
         JMenu fileMenu = new JMenu("File");
-
+        
         JMenuItem m;
-
+        // 1 menu item and its properties
         m = new JMenuItem("load");
         m.addActionListener(new LDButtonHandler());
         fileMenu.add(Box.createVerticalStrut(10));
         fileMenu.add(m);
-
         fileMenu.add(Box.createVerticalStrut(10));
         fileMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
         fileMenu.add(Box.createVerticalStrut(10));
-
+        // 2 menu item and its properties
         m = new JMenuItem("Save");
         m.addActionListener(new SAVEButtonHandler());
         fileMenu.add(m);
         fileMenu.add(Box.createVerticalStrut(10));
-
+        // 3 menu item and its properties
         m = new JMenuItem("Save as...");
         m.addActionListener(new SAVE_AsButtonHandler());
         fileMenu.add(m);
-
         fileMenu.add(Box.createVerticalStrut(10));
         fileMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
         fileMenu.add(Box.createVerticalStrut(10));
 
 
-
+        // 4 menu item and its properties
         m = new JMenuItem("Exit");
-        m.addActionListener(x -> System.exit(0));
+        m.addActionListener(x -> System.exit(0));//terminates the whole programm...
         fileMenu.add(m);
         fileMenu.add(Box.createVerticalStrut(10));
-
+        //create the second menu and its menu items 
         JMenu historyMenu = new JMenu("History");
         historyMenu.add(Box.createVerticalStrut(10));
 
@@ -130,7 +126,7 @@ public class GUI {
         ///m.addActionListener(...);
         historyMenu.add(view);
         historyMenu.add(Box.createVerticalStrut(10));
-
+        //create the third menu and its menu items 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.add(Box.createVerticalStrut(10));
 
@@ -138,7 +134,7 @@ public class GUI {
         m.addActionListener(new InfoButtonHandler());
         helpMenu.add(m);
         helpMenu.add(Box.createVerticalStrut(10));
-
+        //add the menus in the menu bar
         JMenuBar mBar = new JMenuBar();
         mBar.add(fileMenu);
         mBar.add(Box.createHorizontalStrut(10));
@@ -146,9 +142,12 @@ public class GUI {
         mBar.add(Box.createHorizontalStrut(10));
         mBar.add(helpMenu);
 
-        frame.setJMenuBar(mBar);
+        frame.setJMenuBar(mBar);//add the menu bar in top level window
     }
-
+    /**
+     * private method setupLevel2
+     * create all components for this level
+     */
     private void setupLevel2() {
         // set up a JLabel for the Headline
         JLabel headLineLabel = new JLabel("KWIC - Program");
@@ -171,9 +170,12 @@ public class GUI {
         level2.setBackground(Color.red);
 
         levels.add(level2);
-        levels.add(new JSeparator(SwingConstants.HORIZONTAL));//!!!!
+        levels.add(new JSeparator(SwingConstants.HORIZONTAL));
     }
-
+    /**
+     * private method setupLevel3
+     * create all components for this level
+     */
     private void setuplevel3() {
         //left side
         JLabel leftLabel = new JLabel("Enter a file name or URL");
@@ -181,8 +183,7 @@ public class GUI {
         //leftLabel.setPreferredSize(new Dimension(120, 20));
         leftLabel.setMaximumSize(new Dimension(120, 20));
 
-        // DefaultComboBoxModel text = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
-        inputText = new JComboBox(new String[]{"Wikipedia", "File", "Typed text"}); //instance variable!!
+        inputText = new JComboBox(new String[]{"Wikipedia", "File", "Typed text"}); //instantiate the instance variable
         inputText.setSelectedIndex(0);//default inpute text
         inputText.setToolTipText("Choose the input text");
         inputText.setMinimumSize(new Dimension(70, 20));
@@ -191,15 +192,15 @@ public class GUI {
         inputText.setEnabled(true);
         inputText.setEditable(false);
         inputText.addActionListener(new InputTextHandler());
-
+        //crreate a panel and fill it
         JPanel labelPanel = new JPanel();
         labelPanel.add(leftLabel);
         labelPanel.add(Box.createRigidArea(new Dimension(43, 0)));
         labelPanel.add(inputText);
         labelPanel.add(Box.createHorizontalGlue());
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.X_AXIS));
-
-        filename = new JTextField("file.txt or wikipedia URL", 15); //instance variable!!
+        
+        filename = new JTextField("file.txt or wikipedia URL", 15); //instantiate the instance variable
         filename.setToolTipText("You can only enter file with \".txt\" extension, wikipedia URL for english documents"
                 + " or you can type a text");
         filename.setMinimumSize(new Dimension(70, 20));
@@ -212,7 +213,7 @@ public class GUI {
         load.setMinimumSize(new Dimension(70, 20));
         load.setPreferredSize(new Dimension(90, 20));
         load.setMaximumSize(new Dimension(100, 20));
-        load.addActionListener(new LDButtonHandler());
+        load.addActionListener(new LDButtonHandler());//add 
 
         JPanel textButtonPanel = new JPanel();
         textButtonPanel.add(filename);
@@ -234,7 +235,7 @@ public class GUI {
         centerLabel.setMinimumSize(new Dimension(100, 20));
         centerLabel.setPreferredSize(new Dimension(179, 20));
         centerLabel.setMaximumSize(new Dimension(179, 20));
-        keywordmodel = new DefaultComboBoxModel<>();
+        keywordmodel = new DefaultComboBoxModel<>();//instantiate the instance variable
         keywordmodel.addElement("Token");
         keywordmodel.addElement("Lemma");
         keywordmodel.addElement("POS");
@@ -254,7 +255,7 @@ public class GUI {
         center1.add(Box.createHorizontalGlue());
         center1.setLayout(new BoxLayout(center1, BoxLayout.X_AXIS));
 
-        keyword = new JTextField("Search term here", 15); //instance variable!!
+        keyword = new JTextField("Search term here", 15); //instantiate the instance variable
         keyword.setToolTipText("Enter the keyword and press search");
         keyword.setMinimumSize(new Dimension(70, 20));
         keyword.setPreferredSize(new Dimension(90, 20));
@@ -290,8 +291,6 @@ public class GUI {
         //label....
         JLabel rightLabel = new JLabel("Number of words preceding / following the keyword");
         rightLabel.setMinimumSize(new Dimension(70, 20));
-        //rightLabel.setPreferredSize(new Dimension(90, 20));
-        // rightLabel.setMaximumSize(new Dimension(100, 20));
 
         JPanel rightlabelPanel = new JPanel();
         rightlabelPanel.add(rightLabel);
@@ -299,8 +298,7 @@ public class GUI {
         rightlabelPanel.setLayout(new BoxLayout(rightlabelPanel, BoxLayout.X_AXIS));
 
         //two ComboBoxs
-        //DefaultComboBoxModel prev = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
-        numPrev = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instance variable!!
+        numPrev = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instantiate the instance variable
         numPrev.setSelectedIndex(2);//default number
         numPrev.setToolTipText("Choose the number of words precceding the keyword");
         numPrev.setMinimumSize(new Dimension(60, 20));
@@ -308,10 +306,10 @@ public class GUI {
         numPrev.setMaximumSize(new Dimension(60, 20));
         numPrev.setEnabled(false);
         numPrev.setEditable(false);
-        //numPrev.addActionListener(new RadioButtonsListener());
+        //numPrev.addActionListener();
 
-        // DefaultComboBoxModel after = new DefaultComboBoxModel(new String[] {"1","2", "3", "4", "5", "6", "7"});
-        numAfter = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instance variable!!
+      
+        numAfter = new JComboBox(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}); //instantiate the instance variable
         numAfter.setSelectedIndex(2);//default number
         numAfter.setToolTipText("Choose the number of words following the keyword");
         numAfter.setMinimumSize(new Dimension(60, 20));
@@ -344,11 +342,11 @@ public class GUI {
         //last right panel
         JPanel radioPanel = new JPanel(new GridLayout(0, 1));
         ButtonGroup group = new ButtonGroup();
-        activate = new JRadioButton("Activate");
+        activate = new JRadioButton("Activate");//instantiate the instance variable
         activate.setEnabled(false);
         activate.addActionListener(new RadioButtonsListener());
 
-        deactivate = new JRadioButton("Deactivate");
+        deactivate = new JRadioButton("Deactivate");//instantiate the instance variable
         deactivate.setEnabled(false);
         deactivate.addActionListener(new RadioButtonsListener());
         radioPanel.add(activate);
@@ -377,28 +375,32 @@ public class GUI {
         allPanel.add(main);
         allPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         allPanel.setLayout(new BoxLayout(allPanel, BoxLayout.Y_AXIS));
-
+        //add the subpanels in the levels panel
         levels.add(allPanel);
-        levels.add(new JSeparator(SwingConstants.HORIZONTAL));//!!!!
+        levels.add(new JSeparator(SwingConstants.HORIZONTAL));
     }
-
+    
+    /**
+     * private method setupLevel5
+     * create all components for this level
+     */
     private void setupLevel5() {
 
-        leftResults = new JTextArea("Search results", 10, 40);
+        leftResults = new JTextArea("Search results", 10, 40);//instantiate the instance variable
         leftResults.setEditable(true); //the user can copy-paste his/her text and load it...
 
         //add this area into JScrollPane
         JScrollPane leftListPane = new JScrollPane(leftResults);
 
-        leftResults.setEditable(false);
+        leftResults.setEditable(false);// it will be editable only if the user wants to type a text instead for loading from a file or wiki
 
         //create the topPanel TextArea
-        rightUpResults = new JTextArea("Search results", 10, 20);
+        rightUpResults = new JTextArea("Search results", 10, 20);//instantiate the instance variable
         rightUpResults.setEditable(false);
         //add this area into JScrollPane
         JScrollPane rightUpListPane = new JScrollPane(rightUpResults);
 
-        rightDownResults = new JTextArea("Search results", 10, 20);
+        rightDownResults = new JTextArea("Search results", 10, 20);//instantiate the instance variable
         rightDownResults.setEditable(false);
         //add this area into JScrollPane
         JScrollPane rightDownListPane = new JScrollPane(rightDownResults);
@@ -418,13 +420,14 @@ public class GUI {
         panel.add(Box.createRigidArea(new Dimension(5, 5)));
         panel.add(rightArea);
 
-        //add to JFrame
+        //add to top level window
         frame.getContentPane().add(BorderLayout.CENTER, panel);
 
     }
-
+    
     /**
-     * set up west of top level window
+     * private method set up west of top level window
+     * create all components for this level
      */
     private void setUpEast() {
         //1st Panel
@@ -436,7 +439,7 @@ public class GUI {
         labelPanel.setPreferredSize(new Dimension(170, 130));
         labelPanel.setMaximumSize(new Dimension(170, 130));
 
-        tokensButton = new JButton("Tokens");
+        tokensButton = new JButton("Tokens");//instantiate the instance variable
         tokensButton.setToolTipText("Shows all information for Tokens");
         tokensButton.setMinimumSize(new Dimension(90, 20));
         tokensButton.setPreferredSize(new Dimension(140, 20));
@@ -445,7 +448,7 @@ public class GUI {
         tokensButton.setEnabled(false);
         tokensButton.addActionListener(new TokenButtonHandler());
 
-        posButton = new JButton("POS_Tags");
+        posButton = new JButton("POS_Tags");//instantiate the instance variable
         posButton.setToolTipText("Shows all information for POS ");
         posButton.setMinimumSize(new Dimension(90, 20));
         posButton.setPreferredSize(new Dimension(140, 20));
@@ -455,7 +458,7 @@ public class GUI {
         posButton.addActionListener(new POSTAGSButtonHandler());
 
 
-        tagged_SentButton = new JButton("Sentence / Tags");
+        tagged_SentButton = new JButton("Sentence / Tags");//instantiate the instance variable
         tagged_SentButton.setToolTipText("Search for the given keyword");
         tagged_SentButton.setMinimumSize(new Dimension(90, 20));
         tagged_SentButton.setPreferredSize(new Dimension(140, 20));
@@ -490,9 +493,9 @@ public class GUI {
 
         JLabel tagslabel = new JLabel("Pos Tags:");
 
-        tagsModel = new DefaultComboBoxModel<>();
+        tagsModel = new DefaultComboBoxModel<>();//instantiate the instance variable
         posTags = new JComboBox(tagsModel);
-        posTags.setToolTipText("Enter only digits");
+        posTags.setToolTipText("Choose a POS Tag fro the search");
         posTags.setMinimumSize(new Dimension(90, 20));
         posTags.setPreferredSize(new Dimension(100, 20));
         posTags.setMaximumSize(new Dimension(100, 20));
@@ -508,9 +511,9 @@ public class GUI {
 
         JLabel tokenslabel = new JLabel("Tokens:");
 
-        tokensModel = new DefaultComboBoxModel<>();
+        tokensModel = new DefaultComboBoxModel<>();//instantiate the instance variable
         tokens = new JComboBox(tokensModel);
-        tokens.setToolTipText("Enter only digits");
+        tokens.setToolTipText("Choose a token fro the search");
         tokens.setMinimumSize(new Dimension(90, 20));
         tokens.setPreferredSize(new Dimension(100, 20));
         tokens.setMaximumSize(new Dimension(100, 20));
@@ -526,10 +529,10 @@ public class GUI {
 
         JLabel lemmaslabel = new JLabel("Lemmas:");
 
-        lemmasModel = new DefaultComboBoxModel<>();
+        lemmasModel = new DefaultComboBoxModel<>();//instantiate the instance variable
         lemmas = new JComboBox(lemmasModel);
 
-        lemmas.setToolTipText("Enter only digits");
+        lemmas.setToolTipText("EChoose lemma fro the search");//instantiate the instance variable
         lemmas.setMinimumSize(new Dimension(90, 20));
         lemmas.setPreferredSize(new Dimension(100, 20));
         lemmas.setMaximumSize(new Dimension(100, 20));
@@ -560,7 +563,7 @@ public class GUI {
         topPanel.add(Box.createVerticalGlue());
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));//end topPanel
 
-        //add the topPanel to top lavel frame in EAST position
+        //add the topPanel to top lavel window  in EAST position
         frame.getContentPane().add(BorderLayout.EAST, topPanel);
     }
 
@@ -571,28 +574,28 @@ public class GUI {
     private class LDButtonHandler implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            if (filename == null) //it means the cancel button!!!
+            if (filename == null) //it means the cancel button
             {
                 JOptionPane.showMessageDialog(frame, "No input to download");
 
             } else {
                 try {
-                    String command = (String) inputText.getSelectedItem();
+                    String command = (String) inputText.getSelectedItem();//retrieve the selected item by type casting into a String
 
-                    if (command.equals("Typed text")) {
-
+                    if (command.equals("Typed text")) {//if typed text is selected....
+                        //take as input text the text in the left area 
                         project = new DataStoreAndSearch(leftResults.getText(), command);
-                    } else {
+                    } else {//else.. read from a file or wiki
                         project = new DataStoreAndSearch(filename.getText(), command);
                     }
-                    
-                    enableFunctions();//enable all functions we need....
+                    //when the loading is succesful -> enable all functions we need....
+                    enableFunctions();
 
-                    //show documents stats
+                    //set font properties
                     rightDownResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
                     rightDownResults.setMargin(new Insets(10, 10, 10, 10));
                     rightDownResults.setCaretPosition(5);
-                    //rightDownResults.setText(project.documentWideStats());
+                    
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(frame, "Please check your input");
 
@@ -603,7 +606,11 @@ public class GUI {
 
         }
     }
-
+   
+    /**
+     * private method enableFunctions() 
+     * anables all functions we need
+     */
     private void enableFunctions() {
         //when the load is succesful:
         // 1) default is the deactivate action of the radio button
@@ -643,7 +650,7 @@ public class GUI {
 
         // 7) initially tetx for keyword field
         keyword.setText("Enter a keyword");
-
+        //8) dispay the results in rightDown area which remains constant for a particular document
         rightDownResults.setText(project.documentWideStats());
 
     }
@@ -655,7 +662,7 @@ public class GUI {
     private class SearchButtonHandler implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-
+            //set the properties for the areas...
             leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
             leftResults.setMargin(new Insets(30, 40, 30, 40));
             leftResults.setCaretPosition(5);
@@ -667,24 +674,25 @@ public class GUI {
             rightDownResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
             rightDownResults.setMargin(new Insets(10, 10, 10, 10));
             rightDownResults.setCaretPosition(5);
-            rightDownResults.setText(project.documentWideStats());//remains constant
+            
 
-            //return the keyword category
+            //return the keyword category by type casting into a String
             String command = (String) keywordList.getSelectedItem();
 
             //get the model fro histList and fill it with the keywords that the user is searcing for
             DefaultListModel<String> aListModel = (DefaultListModel<String>) histList.getModel();
-            if(!aListModel.contains(keyword.getText()))//no duplicates in the list
-                aListModel.addElement(histNumber + ". " +keyword.getText());
-            histNumber++;
+            if (!aListModel.contains(keyword.getText())) {//no duplicates in the list
+                aListModel.addElement(histNumber + ". " + keyword.getText());
+                histNumber++;//increae the instance variable ny one
+            }
 
             // if the activate radio button is selected:
-            if (activate.isSelected()) {
+            if (activate.isSelected()) {//diplay the selected from the user number of words in the sentence
                 Integer numPrevious = (Integer) numPrev.getSelectedItem();//get the number from combo box
                 Integer numAf = (Integer) numAfter.getSelectedItem();//get the number from combo box
                 if (keyword.getText() == null) {
                     JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
-                } else if (command.equals("Token")) {
+                } else if (command.equals("Token")) {//for token search 
                     String key = keyword.getText();
                     if (!project.getTokenTags().keySet().contains(key)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
@@ -696,8 +704,8 @@ public class GUI {
                             Logger.getLogger(DataStoreAndSearch.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                } else if (command.equals("Lemma")) {
-                    String lem = keyword.getText().trim().toLowerCase();// project.getLemma(keyword.getText().trim());
+                } else if (command.equals("Lemma")) {//for lemma search (
+                    String lem = keyword.getText().trim().toLowerCase();// no case sensitive
                     if(!project.getLemma(lem).isEmpty())
                         lem = project.getLemma(lem);
 
@@ -713,7 +721,7 @@ public class GUI {
                         }
 
                     }
-                } else if (command.equals("POS")) {
+                } else if (command.equals("POS")) {//for pos search
                     if (!project.getTagWithTokens().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
                     } else {
@@ -726,11 +734,11 @@ public class GUI {
                     }
                 }
 
-            } else {
+            } else {//esle deactivated - > is selected : diplay the whole sentences for the results
                 if (keyword.getText() == null) {
                     JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
-                } else if (command.equals("Token")) {
-                    String key = keyword.getText().toLowerCase();
+                } else if (command.equals("Token")) {//for tokens
+                    String key = keyword.getText();
                     if (!project.getTokenTags().keySet().contains(key)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
                     } else {
@@ -741,9 +749,9 @@ public class GUI {
                             Logger.getLogger(DataStoreAndSearch.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                } else if (command.equals("Lemma")) {
+                } else if (command.equals("Lemma")) {//for lemmas
 
-                    String lem = keyword.getText().trim().toLowerCase();// project.getLemma(keyword.getText().trim());
+                    String lem = keyword.getText().trim().toLowerCase();// no case sensitive
                     if(!project.getLemma(lem).isEmpty())
                         lem = project.getLemma(lem);
 
@@ -758,7 +766,7 @@ public class GUI {
                             Logger.getLogger(DataStoreAndSearch.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                } else if (command.equals("POS")) {
+                } else if (command.equals("POS")) {//for pos
                     if (!project.getTagWithTokens().keySet().contains(keyword.getText().trim())) {
                         JOptionPane.showMessageDialog(frame, "there is no such a POS TAG in this Document");
                     } else {
@@ -775,28 +783,33 @@ public class GUI {
     }
 
 
-
+    /**
+     * Private method highlightKeywordForToken: fills the area and highlights the keyword
+     * @param area the JText Area to fill
+     * @param token the token to be highlighted
+     * @throws BadLocationException 
+     */
     private void highlightKeywordForToken(JTextArea area, String token) throws BadLocationException{
         Highlighter highlighter = area.getHighlighter();
         highlighter.removeAllHighlights();//remove all previous
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
 
-
+        //search in each sentence to find the token
         for(int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++){
 
             for(int i = 0; i< project.getSentenceWithTokens().get(j).length; i++){
                 if(project.getSentenceWithTokens().get(j)[i].equalsIgnoreCase(token)){
                     area.append(j + ". ");
                     for(int k = 0; k<= i; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                    }
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");//append until the position that the token is found
+                    }//highlight the token
                     highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
                     for(int k = i +1; k< project.getSentenceWithTokens().get(j).length; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");//continue appending until the end of the sentence
                     }
 
-                }
+                }//diplay in separate line the info for this key word
                 if(token.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])){
 
                     area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
@@ -805,28 +818,33 @@ public class GUI {
             }
         }
     }
-
+    /**
+     * Private method highlightKeywordForLemma: fills the area and highlights the keyword
+     * @param area the JText Area to fill
+     * @param lemma the lemma to be highlighted
+     * @throws BadLocationException 
+     */
     private void highlightKeywordForLemma(JTextArea area, String lemma) throws BadLocationException{
         Highlighter highlighter = area.getHighlighter();
         highlighter.removeAllHighlights();//remove all previous
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
 
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-
+        //search in each sentence to find the token
         for(int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++){
 
             for(int i = 0; i< project.getSentenceWithLemmas().get(j).length; i++){
                 if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
                     area.append(j + ". ");
-                    for(int k = 0; k<= i; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    for(int k = 0; k<= i; k++){//append with tokens... no with lemmas
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");//append until the position that the lemma is found
                     }
                     highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
                     for(int k = i +1; k< project.getSentenceWithLemmas().get(j).length; k++){
                         area.append(project.getSentenceWithTokens().get(j)[k] + " ");
                     }
 
-                }
+                }//diplay in separate line the info for this key word
                 if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
                     area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                             + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
@@ -834,19 +852,25 @@ public class GUI {
             }
         }
     }
+    /**
+     * Private method highlightKeywordForSearchByPOS; fills the area and highlights the keyword
+     * @param area the JText Area to fill
+     * @param pos the pos to be highlighted
+     * @throws BadLocationException 
+     */
     private void highlightKeywordForSearchByPOS(JTextArea area, String pos) throws BadLocationException {
         Highlighter highlighter = area.getHighlighter();
         highlighter.removeAllHighlights();//remove all previous
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
 
         area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-
+        //search in each sentence to find the token
         for(int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++){
             for(int i = 0; i< project.getSentenceWithPOS().get(j).length; i++){
                 if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
                     area.append(j + ". ");
-                    for(int k = 0; k<= i; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    for(int k = 0; k<= i; k++){//append with tokens... no with lemmas
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");//append until the position that the posis found
                     }
                     highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
 
@@ -857,7 +881,7 @@ public class GUI {
                     area.append("\n");
 
                 }
-                //ArrayList<String> sublist = new ArrayList<>();
+                //diplay in separate line the info for this key word
                 if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
                     area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                             + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
@@ -867,7 +891,15 @@ public class GUI {
         }
     }
 
-
+    /**
+     * Private method highlightSearchByPOSAndItsNeighbours: fills the area and highlights the keyword
+     * the user specifies the words preceeding and following the keyword
+     * @param area the JText Area to fill
+     * @param pos the pos to be highlighted
+     * @param numPrev the number of preceeding words
+     * @param numAfter the number of following words
+     * @throws BadLocationException 
+     */
     private void highlightSearchByPOSAndItsNeighbours(JTextArea area, String pos, int numPrev, int numAfter) throws BadLocationException {
         Highlighter highlighter = area.getHighlighter();
         highlighter.removeAllHighlights();//remove all previous
@@ -878,7 +910,7 @@ public class GUI {
         for (int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++) {
             for (int i = 0; i < project.getSentenceWithPOS().get(j).length; i++) {
                 if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
-                    //
+                    //4 cases -> so we avoid IndexOutOfBoundsException
                     if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithPOS().get(j).length)) {
                         area.append(j + ". ");
                         for (int k = 0; k <= i; k++) {
@@ -949,7 +981,15 @@ public class GUI {
             }
         }
     }
-
+      /**
+     * Private method highlightSearchByLEMMAAndItsNeighbours: fills the area and highlights the keyword
+     * the user specifies the words preceeding and following the keyword
+     * @param area the JText Area to fill
+     * @param lemma the lemma to be highlighted
+     * @param numPrev the number of preceeding words
+     * @param numAfter the number of following words
+     * @throws BadLocationException 
+     */
     private void highlightSearchByLEMMAAndItsNeighbours(JTextArea area, String lemma, int numPrev, int numAfter) throws BadLocationException {
         Highlighter highlighter = area.getHighlighter();
         highlighter.removeAllHighlights();//remove all previous
@@ -960,7 +1000,7 @@ public class GUI {
         for (int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++) {
             for (int i = 0; i < project.getSentenceWithLemmas().get(j).length; i++) {
                 if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-                    //
+                    //4 cases -> so we avoid IndexOutOfBoundsException
                     if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
 
                         area.append(j + ". ");
@@ -1032,7 +1072,16 @@ public class GUI {
             }
         }
     }
-    private void highlightSearchByTOKENAndItsNeighbours(JTextArea area, String lemma, int numPrev, int numAfter) throws BadLocationException {
+      /**
+     * Private method highlightSearchByTOKENAndItsNeighbours: fills the area and highlights the keyword
+     * the user specifies the words preceeding and following the keyword
+     * @param area the JText Area to fill
+     * @param tok the token to be highlighted
+     * @param numPrev the number of preceeding words
+     * @param numAfter the number of following words
+     * @throws BadLocationException 
+     */
+    private void highlightSearchByTOKENAndItsNeighbours(JTextArea area, String tok, int numPrev, int numAfter) throws BadLocationException {
         Highlighter highlighter = area.getHighlighter();
         highlighter.removeAllHighlights();//remove all previous
         HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
@@ -1041,7 +1090,8 @@ public class GUI {
 
         for (int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++) {
             for (int i = 0; i < project.getSentenceWithTokens().get(j).length; i++) {
-                if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
+                if (tok.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
+                    //4 cases -> so we avoid IndexOutOfBoundsException
                     if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
 
                         area.append(j + ". ");
@@ -1054,7 +1104,7 @@ public class GUI {
                         }
                         area.append("\n");
 
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
+                        if (tok.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
@@ -1069,7 +1119,7 @@ public class GUI {
                         }
                         area.append("\n");
 
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
+                        if (tok.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
@@ -1084,7 +1134,7 @@ public class GUI {
                         }
                         area.append("\n");
 
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
+                        if (tok.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
                         }
@@ -1100,7 +1150,7 @@ public class GUI {
                         }
                         area.append("\n");
 
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
+                        if (tok.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
 
                             area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
                                     + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
@@ -1111,8 +1161,7 @@ public class GUI {
         }
     }
     /**
-     * private class LDButtonHandler for handling the event fired by load
-     * buttton
+     * private class InputTextHandler for handling the event
      */
     private class InputTextHandler implements ActionListener {
 
@@ -1121,17 +1170,16 @@ public class GUI {
                 leftResults.setLineWrap(true);
                 leftResults.setEditable(true);
                 filename.setEnabled(false);
-              //  leftResults.setText("Here can you type your text");
             } else if (inputText.getSelectedItem().equals("Wikipedia") || inputText.getSelectedItem().equals("File")) {
                 leftResults.setEditable(false);
-                filename.setEnabled(true);/////
-                leftResults.setLineWrap(false);//////
+                filename.setEnabled(true);
+                leftResults.setLineWrap(false);
             }
         }
     }
 
-    /*
-         * ActionListener for the radio buttons
+    /**
+     * private class RadioButtonsListener for handling the event
      */
     private class RadioButtonsListener implements ActionListener {
 
@@ -1150,7 +1198,7 @@ public class GUI {
     }
 
     /**
-     * private class LDButtonHandler for handling the event fired by load
+     * private class TokensComboBoxHandler for handling the event fired by load
      * buttton
      */
     private class TokensComboBoxHandler implements ActionListener {
@@ -1159,13 +1207,13 @@ public class GUI {
             //or String command = String.valueOf(tokens.getSelectedItem());
             String command = (String) (tokens.getSelectedItem());
             keyword.setText(command);
-            keywordList.setSelectedItem("Token");
+            keywordList.setSelectedItem("Token");//make selection automatically
 
         }
     }
 
     /**
-     * private class LDButtonHandler for handling the event fired by load
+     * private class LemmasComboBoxHandler  for handling the event fired by load
      * buttton
      */
     private class LemmasComboBoxHandler implements ActionListener {
@@ -1174,13 +1222,13 @@ public class GUI {
             //or String command = String.valueOf(tokens.getSelectedItem());
             String command = (String) (lemmas.getSelectedItem());
             keyword.setText(command);
-            keywordList.setSelectedItem("Lemma");
+            keywordList.setSelectedItem("Lemma");//make selection automatically
 
         }
     }
 
     /**
-     * private class LDButtonHandler for handling the event fired by load
+     * private class POSTagsComboBoxHandler for handling the event fired by load
      * buttton
      */
     private class POSTagsComboBoxHandler implements ActionListener {
@@ -1188,15 +1236,14 @@ public class GUI {
         public void actionPerformed(ActionEvent e) {
             //or String command = String.valueOf(tokens.getSelectedItem());
             String command = (String) (posTags.getSelectedItem());
-           //posTags.setToolTipText(TagToEnglish.tagUpdater(command));//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
             keyword.setText(command);
-            keywordList.setSelectedItem("POS");
+            keywordList.setSelectedItem("POS");//make selection automatically
 
         }
     }
 
     /**
-     * private class LDButtonHandler for handling the event fired by load
+     * private class SAVEButtonHandler for handling the event fired by load
      * buttton
      */
     private class SAVEButtonHandler implements ActionListener {
@@ -1219,9 +1266,9 @@ public class GUI {
                         }
                     }
                 }
-                storeInFile(savedtext);
+                storeInFile(savedtext);//else jusst overwrite without asking the user for that 
             } else {
-                storeInFile(savedtext);
+                storeInFile(savedtext);//else jusst overwrite without asking the user for that 
             }
         }
     }
@@ -1260,15 +1307,15 @@ public class GUI {
     }
 
     /**
-     * private method to print in the file
-     *
+     * private method  storeInFile
+     * prints the results af all 3 text areas in the file
      * @param aName
      */
     private void storeInFile(String aName) {
         try (PrintWriter output = new PrintWriter(new File(aName))) {
             String newline = System.getProperty("line.separator");
 
-           
+            output.println("THE RESULTS FOR YOUR SEARCH ARE:" + newline);
 
             //for the text in leftResults:
             String linesLeft[] = leftResults.getText().split("\\r?\\n");
@@ -1316,7 +1363,7 @@ public class GUI {
             leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
             leftResults.setMargin(new Insets(10, 10, 10, 10));
             leftResults.setCaretPosition(2);
-            leftResults.setText(project.getInformationForAlltokens());
+            leftResults.setText(project.getInformationForAlltokens());//call the method from DataStoreAndSearch
 
         }
 
@@ -1332,14 +1379,14 @@ public class GUI {
             leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
             leftResults.setMargin(new Insets(10, 10, 10, 10));
             leftResults.setCaretPosition(2);
-            leftResults.setText(project.showInformationForAllPOStags());
+            leftResults.setText(project.showInformationForAllPOStags());//call the method from DataStoreAndSearch
 
         }
 
     }
 
     /**
-     * private class POSTAGSButtonHandler for handling the event fired by load
+     * private class SENTandTAGSButtonHandler for handling the event fired by load
      * buttton
      */
     private class SENTandTAGSButtonHandler implements ActionListener {
@@ -1348,18 +1395,18 @@ public class GUI {
             leftResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
             leftResults.setMargin(new Insets(10, 10, 10, 10));
             leftResults.setCaretPosition(2);
-            leftResults.setText(project.getTextWithFormTOKEN_TAG());
+            leftResults.setText(project.getTextWithFormTOKEN_TAG());//call the method from DataStoreAndSearch
         }
     }
 
     /**
-     * private class POSTAGSButtonHandler for handling the event fired by load
+     * private class InfoButtonHandler  for handling the event fired by load
      * buttton
      */
     private class InfoButtonHandler implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            JFrame infoframe = new JFrame("KWIC Program manual");
+            JFrame infoframe = new JFrame("KWIC Program manual");//create a separate jframe window
             infoframe.setSize(650, 600);
             infoframe.setMinimumSize(new Dimension(300, 400));
             infoframe.setMaximumSize((new Dimension(300, 700)));
@@ -1403,7 +1450,7 @@ public class GUI {
 
             infoframe.getContentPane().add(infoPane);
 
-            infoframe.addWindowListener(new MyWindowListener());
+            infoframe.addWindowListener(new MyWindowListener());// add window listener: close onl the window we select..
             infoframe.setVisible(true);
 
         }
@@ -1415,7 +1462,7 @@ public class GUI {
      */
     private class MyWindowListener extends WindowAdapter {
         public void windowClosing(WindowEvent e) {
-            e.getWindow().dispose();
+            e.getWindow().dispose();//dispose only the current window
         }
     }
 
