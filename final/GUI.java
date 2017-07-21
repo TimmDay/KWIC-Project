@@ -676,7 +676,7 @@ public class GUI {
                 if (keyword.getText() == null) {
                     JOptionPane.showMessageDialog(frame, "there is no such a word in this Document");
                 } else if (command.equals("Token")) {
-                    String key = keyword.getText().toLowerCase();
+                    String key = keyword.getText();
                     if (!project.getTokenTags().keySet().contains(key)) {
                         JOptionPane.showMessageDialog(frame, "there is no such a token in this Document");
                     } else {
