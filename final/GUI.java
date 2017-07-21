@@ -85,20 +85,14 @@ public class GUI {
         JMenu fileMenu = new JMenu("File");
         
         JMenuItem m;
+       
         // 1 menu item and its properties
-        m = new JMenuItem("load");
-        m.addActionListener(new LDButtonHandler());
-        fileMenu.add(Box.createVerticalStrut(10));
-        fileMenu.add(m);
-        fileMenu.add(Box.createVerticalStrut(10));
-        fileMenu.add(new JSeparator(SwingConstants.HORIZONTAL));
-        fileMenu.add(Box.createVerticalStrut(10));
-        // 2 menu item and its properties
         m = new JMenuItem("Save");
         m.addActionListener(new SAVEButtonHandler());
+        fileMenu.add(Box.createVerticalStrut(10));
         fileMenu.add(m);
         fileMenu.add(Box.createVerticalStrut(10));
-        // 3 menu item and its properties
+        // 2 menu item and its properties
         m = new JMenuItem("Save as...");
         m.addActionListener(new SAVE_AsButtonHandler());
         fileMenu.add(m);
@@ -107,7 +101,7 @@ public class GUI {
         fileMenu.add(Box.createVerticalStrut(10));
 
 
-        // 4 menu item and its properties
+        // 3 menu item and its properties
         m = new JMenuItem("Exit");
         m.addActionListener(x -> System.exit(0));//terminates the whole programm...
         fileMenu.add(m);
@@ -583,24 +577,23 @@ public class GUI {
                     String command = (String) inputText.getSelectedItem();//retrieve the selected item by type casting into a String
 
                     if (command.equals("Typed text")) {//if typed text is selected....
+                        
                         //take as input text the text in the left area 
                         project = new DataStoreAndSearch(leftResults.getText(), command);
+                        
                     } else {//else.. read from a file or wiki
                         project = new DataStoreAndSearch(filename.getText(), command);
                     }
                     //when the loading is succesful -> enable all functions we need....
                     enableFunctions();
 
-                    //set font properties
-                    rightDownResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
-                    rightDownResults.setMargin(new Insets(10, 10, 10, 10));
-                    rightDownResults.setCaretPosition(5);
+                    
                     
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(frame, "Please check your input");
 
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(frame, "Please check your input");
+                    JOptionPane.showMessageDialog(frame, "Please check your input!!");
                 }
             }
 
@@ -651,6 +644,10 @@ public class GUI {
         // 7) initially tetx for keyword field
         keyword.setText("Enter a keyword");
         //8) dispay the results in rightDown area which remains constant for a particular document
+        //set font properties
+        rightDownResults.setFont(new Font(Font.SERIF, Font.ROMAN_BASELINE, 15));
+        rightDownResults.setMargin(new Insets(10, 10, 10, 10));
+        rightDownResults.setCaretPosition(5);
         rightDownResults.setText(project.documentWideStats());
 
     }
@@ -1253,7 +1250,9 @@ public class GUI {
             //prompt the user to enter a name for the file
             if (savedtext == null) {
                 savedtext = JOptionPane.showInputDialog(frame, "Enter a file name which the elements are stored in");
-                if (new File(savedtext).exists()) { //if file already exists
+                if (savedtext == null) { //if user clicks on cancel !!!
+                    JOptionPane.showMessageDialog(frame, "you canceled the loading");
+                } else if (new File(savedtext).exists()) { //if file already exists
                     //ask the user if he wants to overwrite it
                     if (JOptionPane.showConfirmDialog(frame, "A file with this name exists. Do you want to replace the old file?")
                             == JOptionPane.YES_OPTION) {
@@ -1266,9 +1265,17 @@ public class GUI {
                         }
                     }
                 }
-                storeInFile(savedtext);//else jusst overwrite without asking the user for that 
+                if (savedtext == null) { //if user clicks on cancel !!!
+                    JOptionPane.showMessageDialog(frame, "you canceled the loading");
+                } else {
+                    storeInFile(savedtext);//else jusst overwrite without asking the user for that 
+                }
             } else {
-                storeInFile(savedtext);//else jusst overwrite without asking the user for that 
+                if (savedtext == null) { //if user clicks on cancel !!!
+                    JOptionPane.showMessageDialog(frame, "you canceled the loading");
+                } else {
+                    storeInFile(savedtext);//else jusst overwrite without asking the user for that 
+                }
             }
         }
     }
