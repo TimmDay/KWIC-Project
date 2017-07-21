@@ -8,6 +8,7 @@ import java.io.IOException;
  * SCRAPER
  * a class to retrieve text from the web
  * specifically, the contents of the paragraph tags of english language wikipedia articles
+ * @author Stella Lee
  */
 public class Scraper {
 
@@ -34,4 +35,3 @@ public class Scraper {
      */
     public String getCorpus() {return corpus;}
 }
-
