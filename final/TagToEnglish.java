@@ -1,9 +1,13 @@
 /**
- * Created by timday on 7/19/17.
+ * Class. converts a pos tag to a description
+ * @author Tim
  */
 public class TagToEnglish {
-
-
+    /**
+     * static method
+     * @param tag
+     * @return a String that describes that tag
+     */
     public static String tagUpdater(String tag){
         String result = "";
 
