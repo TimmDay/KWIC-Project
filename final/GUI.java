@@ -35,7 +35,7 @@ import javax.swing.text.Highlighter.HighlightPainter;
 
 /**
  *
- * @author Savvas
+ * @author Savvas and Stella
  */
 public class GUI {
 
@@ -53,6 +53,7 @@ public class GUI {
     private JList<String> histList;
     private int histNumber = 1;
 
+    // CONSTRUCTOR
     public GUI() {
         frame = new JFrame("Java Project");
         frame.setSize(1000, 500);
