@@ -28,7 +28,7 @@ import javax.swing.text.Highlighter.HighlightPainter;
 
 /**
  *
- * @author Savvas
+ * @author Savvas and Stella
  */
 public class GUI {
 
@@ -222,7 +222,7 @@ public class GUI {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));//end left
 
         //center
-        JLabel centerLabel = new JLabel("Enter a keaword");
+        JLabel centerLabel = new JLabel("Enter a keyword");
         centerLabel.setMinimumSize(new Dimension(100, 20));
         centerLabel.setPreferredSize(new Dimension(179, 20));
         centerLabel.setMaximumSize(new Dimension(179, 20));
@@ -766,341 +766,6 @@ public class GUI {
     }
 
 
-
-    private void highlightKeywordForToken(JTextArea area, String token) throws BadLocationException{
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
-        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-
-
-        for(int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++){
-
-            for(int i = 0; i< project.getSentenceWithTokens().get(j).length; i++){
-                if(project.getSentenceWithTokens().get(j)[i].equalsIgnoreCase(token)){
-                    area.append(j + ". ");
-                    for(int k = 0; k<= i; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                    }
-                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
-                    for(int k = i +1; k< project.getSentenceWithTokens().get(j).length; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                    }
-
-                }
-                if(token.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])){
-
-                    area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] + " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                }
-            }
-        }
-    }
-
-    private void highlightKeywordForLemma(JTextArea area, String lemma) throws BadLocationException{
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
-
-        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-
-        for(int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++){
-
-            for(int i = 0; i< project.getSentenceWithLemmas().get(j).length; i++){
-                if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
-                    area.append(j + ". ");
-                    for(int k = 0; k<= i; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                    }
-                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
-                    for(int k = i +1; k< project.getSentenceWithLemmas().get(j).length; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                    }
-
-                }
-                if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
-                    area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                }
-            }
-        }
-    }
-    private void highlightKeywordForSearchByPOS(JTextArea area, String pos) throws BadLocationException {
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
-
-        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-
-        for(int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++){
-            for(int i = 0; i< project.getSentenceWithPOS().get(j).length; i++){
-                if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
-                    area.append(j + ". ");
-                    for(int k = 0; k<= i; k++){
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                    }
-                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
-
-                    for(int k = i +1; k< project.getSentenceWithPOS().get(j).length; k++){
-
-                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                    }
-                    area.append("\n");
-
-                }
-                //ArrayList<String> sublist = new ArrayList<>();
-                if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
-                    area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                    //+ TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i])
-                }
-            }
-        }
-    }
-
-
-    private void highlightSearchByPOSAndItsNeighbours(JTextArea area, String pos, int numPrev, int numAfter) throws BadLocationException {
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
-
-        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-
-        for (int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++) {
-            for (int i = 0; i < project.getSentenceWithPOS().get(j).length; i++) {
-                if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
-                    //
-                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithPOS().get(j).length)) {
-                        area.append(j + ". ");
-                        for (int k = 0; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i + numAfter >= project.getSentenceWithPOS().get(j).length) && (i - numPrev >= 0)) {
-                        area.append(j + ". ");
-                        for (int k = i - numPrev; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithPOS().get(j).length)) {
-                        area.append(j + ". ");
-                        for (int k = 0; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k <= i + numAfter; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithPOS().get(j).length)) {
-
-                        area.append(j + ". ");
-                        for (int k = i - numPrev; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k <= i + numAfter; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void highlightSearchByLEMMAAndItsNeighbours(JTextArea area, String lemma, int numPrev, int numAfter) throws BadLocationException {
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
-
-        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
-
-        for (int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++) {
-            for (int i = 0; i < project.getSentenceWithLemmas().get(j).length; i++) {
-                if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-                    //
-                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
-
-                        area.append(j + ". ");
-                        for (int k = 0; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i + numAfter >= project.getSentenceWithTokens().get(j).length) && (i - numPrev >= 0)) {
-                        area.append(j + ". ");
-                        for (int k = i - numPrev; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
-                        area.append(j + ". ");
-                        for (int k = 0; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k <= i + numAfter; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
-
-                        area.append(j + ". ");
-                        for (int k = i - numPrev; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k <= i + numAfter; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    }
-                }
-            }
-        }
-    }
-    private void highlightSearchByTOKENAndItsNeighbours(JTextArea area, String lemma, int numPrev, int numAfter) throws BadLocationException {
-        Highlighter highlighter = area.getHighlighter();
-        highlighter.removeAllHighlights();//remove all previous
-        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
-
-        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n");
-
-        for (int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++) {
-            for (int i = 0; i < project.getSentenceWithTokens().get(j).length; i++) {
-                if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
-                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
-
-                        area.append(j + ". ");
-                        for (int k = 0; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i + numAfter >= project.getSentenceWithTokens().get(j).length) && (i - numPrev >= 0)) {
-                        area.append(j + ". ");
-                        for (int k = i - numPrev; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
-                        area.append(j+ ". ");
-                        for (int k = 0; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k <= i + numAfter; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
-
-                        area.append(j + ". ");
-                        for (int k = i - numPrev; k <= i; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
-                        for (int k = i + 1; k <= i + numAfter; k++) {
-                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
-                        }
-                        area.append("\n");
-
-                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
-
-                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
-                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
-                        }
-                    }
-                }
-            }
-        }
-    }
     /**
      * private class LDButtonHandler for handling the event fired by load
      * buttton
@@ -1114,6 +779,7 @@ public class GUI {
                 filename.setEnabled(false);
             } else if (inputText.getSelectedItem().equals("Wikipedia") || inputText.getSelectedItem().equals("File")) {
                 leftResults.setEditable(false);
+                filename.setEnabled(true);
             }
         }
     }
@@ -1340,8 +1006,9 @@ public class GUI {
     }
 
     /**
+     * USER GUIDE
      * private class POSTAGSButtonHandler for handling the event fired by load
-     * buttton
+     * button
      */
     private class InfoButtonHandler implements ActionListener {
 
@@ -1385,8 +1052,6 @@ public class GUI {
                     "6.0 SAVING YOUR OUTPUT\n" +
                     "To save a file, select 'Save' or 'Save As' from the file menu.");
             JScrollPane infoPane = new JScrollPane(infotxt);
-            // todo
-
 
             infoframe.getContentPane().add(infoPane);
 
@@ -1406,8 +1071,371 @@ public class GUI {
         }
     }
 
+
+
+    // GUI HIGHLIGHTING FIXES
+
+    /*
+     * Private method - a GUI fix for te highlighting with neighbors
+     */
+    private void highlightKeywordForToken(JTextArea area, String token) throws BadLocationException{
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+
+
+        for(int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++){
+
+            for(int i = 0; i< project.getSentenceWithTokens().get(j).length; i++){
+                if(project.getSentenceWithTokens().get(j)[i].equalsIgnoreCase(token)){
+                    area.append(j + ". ");
+                    for(int k = 0; k<= i; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
+                    for(int k = i +1; k< project.getSentenceWithTokens().get(j).length; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+
+                }
+                if(token.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])){
+
+                    area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] + " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                }
+            }
+        }
+    }
+
+    /*
+     * Private method - a GUI fix for te highlighting with neighbors
+     */
+    private void highlightKeywordForLemma(JTextArea area, String lemma) throws BadLocationException{
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+
+        for(int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++){
+
+            for(int i = 0; i< project.getSentenceWithLemmas().get(j).length; i++){
+                if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
+                    area.append(j + ". ");
+                    for(int k = 0; k<= i; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
+                    for(int k = i +1; k< project.getSentenceWithLemmas().get(j).length; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+
+                }
+                if(lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])){
+                    area.append("\n(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                }
+            }
+        }
+    }
+
+    /*
+     * Private method - a GUI fix for te highlighting with neighbors
+     */
+    private void highlightKeywordForSearchByPOS(JTextArea area, String pos) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+
+        for(int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++){
+            for(int i = 0; i< project.getSentenceWithPOS().get(j).length; i++){
+                if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
+                    area.append(j + ". ");
+                    for(int k = 0; k<= i; k++){
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+                    highlighter.addHighlight(area.getText().length()-project.getSentenceWithTokens().get(j)[i].length()-1, area.getText().length() - 1, painter);
+
+                    for(int k = i +1; k< project.getSentenceWithPOS().get(j).length; k++){
+
+                        area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                    }
+                    area.append("\n");
+
+                }
+                //ArrayList<String> sublist = new ArrayList<>();
+                if(pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])){
+                    area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                            + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                    //+ TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i])
+                }
+            }
+        }
+    }
+
+
+    /*
+     * Private method - a GUI fix for te highlighting with neighbors
+     */
+    private void highlightSearchByPOSAndItsNeighbours(JTextArea area, String pos, int numPrev, int numAfter) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+
+        for (int j = 0; j < project.getSentenceWithPOS().keySet().size(); j++) {
+            for (int i = 0; i < project.getSentenceWithPOS().get(j).length; i++) {
+                if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+                    //
+                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithPOS().get(j).length)) {
+                        area.append(j + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i + numAfter >= project.getSentenceWithPOS().get(j).length) && (i - numPrev >= 0)) {
+                        area.append(j + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithPOS().get(j).length)) {
+                        area.append(j + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithPOS().get(j).length)) {
+
+                        area.append(j + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (pos.equalsIgnoreCase(project.getSentenceWithPOS().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * Private method - a GUI fix for te highlighting with neighbors
+     */
+    private void highlightSearchByLEMMAAndItsNeighbours(JTextArea area, String lemma, int numPrev, int numAfter) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n\n");
+
+        for (int j = 0; j < project.getSentenceWithLemmas().keySet().size(); j++) {
+            for (int i = 0; i < project.getSentenceWithLemmas().get(j).length; i++) {
+                if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+                    //
+                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
+
+                        area.append(j + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i + numAfter >= project.getSentenceWithTokens().get(j).length) && (i - numPrev >= 0)) {
+                        area.append(j + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
+                        area.append(j + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
+
+                        area.append(j + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * Private method - a GUI fix for te highlighting with neighbors
+     */
+    private void highlightSearchByTOKENAndItsNeighbours(JTextArea area, String lemma, int numPrev, int numAfter) throws BadLocationException {
+        Highlighter highlighter = area.getHighlighter();
+        highlighter.removeAllHighlights();//remove all previous
+        HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.ORANGE);
+
+        area.setText("THE RESULTS OF YOUR SEARCH ARE: \n");
+
+        for (int j = 0; j < project.getSentenceWithTokens().keySet().size(); j++) {
+            for (int i = 0; i < project.getSentenceWithTokens().get(j).length; i++) {
+                if (lemma.equalsIgnoreCase(project.getSentenceWithTokens().get(j)[i])) {
+                    if ((i - numPrev < 0) && (i + numAfter >= project.getSentenceWithTokens().get(j).length)) {
+
+                        area.append(j + ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i + numAfter >= project.getSentenceWithTokens().get(j).length) && (i - numPrev >= 0)) {
+                        area.append(j + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k < project.getSentenceWithPOS().get(j).length; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev < 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
+                        area.append(j+ ". ");
+                        for (int k = 0; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    } else if ((i - numPrev >= 0) && (i + numAfter < project.getSentenceWithTokens().get(j).length)) {
+
+                        area.append(j + ". ");
+                        for (int k = i - numPrev; k <= i; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        highlighter.addHighlight(area.getText().length() - project.getSentenceWithTokens().get(j)[i].length() - 1, area.getText().length() - 1, painter);
+                        for (int k = i + 1; k <= i + numAfter; k++) {
+                            area.append(project.getSentenceWithTokens().get(j)[k] + " ");
+                        }
+                        area.append("\n");
+
+                        if (lemma.equalsIgnoreCase(project.getSentenceWithLemmas().get(j)[i])) {
+
+                            area.append("(Token: " + project.getSentenceWithTokens().get(j)[i] + "   Lemma : " + project.getSentenceWithLemmas().get(j)[i]
+                                    + "   POSTag: " + project.getSentenceWithPOS().get(j)[i] +  " -> " + TagToEnglish.tagUpdater(project.getSentenceWithPOS().get(j)[i]) + ")\n\n");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * main method for GUI
+     * @param args
+     */
     public static void main(String[] args) {
         GUI pr = new GUI();
     }
-
 }
