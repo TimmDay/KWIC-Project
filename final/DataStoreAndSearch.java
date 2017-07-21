@@ -16,6 +16,8 @@ import opennlp.tools.lemmatizer.*;
  * DataStoreAndSearch - this is a data store for the linguistics stats from the open nlp tools
  * and also provides and populates additional instance variables to structure information in various ways
  * for easy retrieval.
+ * The search process can be seen in documentWideStats(), statisticsOfToken(String aWord), statisticsOfPOS(String tag)
+ * abd statisticsOfLemma(String lemma)
  * @authors Savvas Chatzipanagiotidis, Tim Day, Stella Lee, Mareile Winkler
  */
 
@@ -122,7 +124,6 @@ public class DataStoreAndSearch {
             // this loop is for fixing case sensitivity of lemmas for a flexible lemma search
             // also removing erroneous quotation marks returned by the open nlp tools
             for (int i = 0; i < lemmas.length; i++) {
-
 
                 lemmas[i] = lemmas[i].toLowerCase(); // all lemmas to lowercase for more flexible search
 
@@ -266,8 +267,8 @@ public class DataStoreAndSearch {
         }
     }
 
-    /**
-     * helper method that read the text from a file
+    /*
+     * HELPER method that read the text from a file
      *
      * @param fileName the file to be read
      * @return the text from the file as a single string
@@ -285,7 +286,8 @@ public class DataStoreAndSearch {
         return text;
     }
 
-    /**
+    /*
+     * HELPER METHOD
      * delete the parks (but not the panctuation ones)
      * @Param word
      * @return
@@ -307,7 +309,6 @@ public class DataStoreAndSearch {
         word = word.replace("'", "");
         return word;
     }
-
 
 
 
@@ -568,7 +569,9 @@ public class DataStoreAndSearch {
 
     /**
      * Analyse the Document for relevant statistics
+     * (to be displayed in the bottom right window of the GUI, upon document load)
      * @return a String summary of the stats, for import to the GUI
+     * @author Mareile Winkler
      */
     public String documentWideStats() {
 
@@ -603,16 +606,17 @@ public class DataStoreAndSearch {
 
         for ( int i = 0 ; i < 5 ; i++ ) result2 += tokenList.get ( i );
 
-
         return "\n" + totalNumberofTokens + "\n" + "\n" + "Top 5 POS Tags:" + "\n" + result + "\n" + "Top 5 Tokens (> 3 letters):" + "\n" + result2;
     }
 
 
 
     /**
-     * Generate the relevant statistics of a Token serach of the document
+     * Generate the relevant statistics of a Token search of the document
+     * (to be displayed in the top right window of the GUI, after a Token search)
      * @param aWord - the token to search for
      * @return a String summary of the token search statistics, ready for GUI importing
+     * @author Mareile Winkler
      */
     public String statisticsOfToken(String aWord) {
 
@@ -771,7 +775,6 @@ public class DataStoreAndSearch {
 
         //reduce the size of next to get the first 5 elements
         if (next.size() > 4)
-
         {
             re = next.subList(0, 5);  }
 
@@ -790,8 +793,7 @@ public class DataStoreAndSearch {
         for (String e : prevWord)
 
         //if tokenTags contains the key e
-        { if (tokenWithTags.containsKey(e))
-        {
+        { if (tokenWithTags.containsKey(e)) {
             //get the value (the POS Tag) of e and store it in dict
             dict.add(tokenWithTags.get(e)); } }
 
@@ -808,16 +810,11 @@ public class DataStoreAndSearch {
         HashMap<String, Integer> counters = new HashMap<>();
 
         //loop through the strings in hel
-        for (String i : hel)
-
-        //if there is the key i in counters
-        { if (counters.containsKey (i))
-        {
-            //for each occurence of i - add 1 to the count
-            counters.put(i, counters.get(i)+1); }
+        for (String i : hel) {
+            if (counters.containsKey (i)) {  //if there is the key i in counters
+            counters.put(i, counters.get(i)+1); } //for each occurence of i - add 1 to the count
         else
             counters.put(i, 1);
-
         }
 
         //create an array and transform the entries in counters to elements in that array
@@ -927,12 +924,12 @@ public class DataStoreAndSearch {
     }
 
 
-
-
     /**
      * Generate the relevant statistics of a LEMMA search of the document
+     * (to be displayed in the top right window of the GUI, after a lemma search)
      * @param lemma - the lemma to search for
      * @return a String summary of the lemma search statistics, ready for GUI importing
+     * @author Mareile Winkler
      */
     public String statisticsOfLemma(String lemma) {
 
@@ -989,8 +986,10 @@ public class DataStoreAndSearch {
 
     /**
      * Generate the relevant statistics of a POS tag serach of the document
+     * (to be displayed in the top right window of the GUI, after a pos tag search)
      * @param po - the pos tag to search for
      * @return a String summary of the POS tag search statistics, ready for GUI importing
+     * @author Mareile Winkler
      */
     public String statisticsOfPOS(String po) {
 
@@ -1227,9 +1226,5 @@ public class DataStoreAndSearch {
         return "Frequency of that POS Tag:" + " " + formattedResult + "\n" + "Most frequent Tokens with that Tag:" + "\n" + resul + "\n"
                 + "Most likely to be preceeding POS Tag" + "\n" + result  + "\n"
                 + "Most likely to be following  POS Tag" + "\n" + resultem;
-    }
-
-    public static void main(String[] args){
-
     }
 }
